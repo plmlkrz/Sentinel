@@ -19,8 +19,13 @@ public class SentinelHooks {
 
     @Before
     public void setUp() {
-        if (Configuration.toBoolean("recordTests"))
-            SentinelScreenRecorder.startRecording();
+        if (Configuration.toBoolean("recordTests")) {
+            try {
+                SentinelScreenRecorder.startRecording();
+            } catch (Exception e) {
+                log.warn("Screen recording could not be started: {}", e.getMessage());
+            }
+        }
     }
 
     @After
@@ -36,8 +41,13 @@ public class SentinelHooks {
             log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: https://github.com/dougnoel/sentinel/issues", totalWaitTime);
         }
 
-        if (Configuration.toBoolean("recordTests"))
-            SentinelScreenRecorder.stopRecording();
+        if (Configuration.toBoolean("recordTests")) {
+            try {
+                SentinelScreenRecorder.stopRecording();
+            } catch (Exception e) {
+                log.warn("Screen recording could not be stopped: {}", e.getMessage());
+            }
+        }
 
         if (!Configuration.toBoolean("leaveBrowserOpen")) {
             Driver.quitAllDrivers();
