@@ -297,6 +297,18 @@
 	<plugins>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<configuration>
+				<suiteXmlFiles>
+					<suiteXmlFile>testng.xml</suiteXmlFile>
+				</suiteXmlFiles>
+				<excludes>
+					<exclude>**/SentinelTests.java</exclude>
+				</excludes>
+			</configuration>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-source-plugin</artifactId>
 			<executions>
 				<execution>
