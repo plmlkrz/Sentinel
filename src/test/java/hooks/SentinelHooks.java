@@ -1,10 +1,10 @@
 package hooks;
 
-import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.enums.YAMLObjectType;
-import com.dougnoel.sentinel.system.SentinelScreenRecorder;
-import com.dougnoel.sentinel.system.TestManager;
-import com.dougnoel.sentinel.webdrivers.Driver;
+import io.github.sentinel.configurations.Configuration;
+import io.github.sentinel.enums.YAMLObjectType;
+import io.github.sentinel.system.SentinelScreenRecorder;
+import io.github.sentinel.system.TestManager;
+import io.github.sentinel.webdrivers.Driver;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -38,7 +38,7 @@ public class SentinelHooks {
 
         String totalWaitTime = Configuration.toString("totalWaitTime");
         if (totalWaitTime != null) {
-            log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: https://github.com/dougnoel/sentinel/issues", totalWaitTime);
+            log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: https://github.com/sentinel-framework/sentinel/issues", totalWaitTime);
         }
 
         if (Configuration.toBoolean("recordTests")) {

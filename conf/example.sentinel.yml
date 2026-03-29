@@ -1,7 +1,7 @@
 ---
 #This file is provided as an example, and is not used as-is.
 #Please create a "sentinel.yml" file to set configurations using this method.
-#Refer to sentinel and it's example github pages (https://github.com/dougnoel/sentinel , https://github.com/dougnoel/sentinel.example) for more information.
+#Refer to sentinel and it's example github pages (https://github.com/sentinel-framework/sentinel , https://github.com/sentinel-framework/sentinel.example) for more information.
 configurations:
   default:
     name: "Sentinel.Example"
@@ -11,7 +11,7 @@ configurations:
     timeout: 10
     build: "1.0.5"
     tags: "new_test"
-    os: "Windows 10"
+    os: "Windows 11"
     browser: "chrome"
     browserVersion: "latest"
     chromeBrowserBinary: "my/path/here/executableName.exe"
@@ -26,7 +26,7 @@ configurations:
     headless: false
     user.name: "Stage Jenkins"
     timeout: 1
-    os: "Windows 10"
+    os: "Windows 11"
     browser: "IE"
     browserVersion: "latest"
 ...

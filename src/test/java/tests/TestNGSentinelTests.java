@@ -5,7 +5,7 @@ import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(
     features = "src/test/java/features",
-    glue = {"com.dougnoel.sentinel.steps", "steps", "hooks"},
+    glue = {"io.github.sentinel.steps", "steps", "hooks"},
     plugin = {
         "json:target/cucumber.json",
         "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"

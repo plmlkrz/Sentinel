@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/dougnoel/sentinel/tree/HEAD)
+## [Unreleased](https://github.com/sentinel-framework/sentinel/tree/HEAD)
 
-[Full Changelog](https://github.com/dougnoel/sentinel/compare/v1.0.12-SNAPSHOT...HEAD)
+[Full Changelog](https://github.com/sentinel-framework/sentinel/compare/v1.0.12-SNAPSHOT...HEAD)
 
 **Implemented enhancements:**
 
