@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.dougnoel/sentinel/badge.svg)](https://search.maven.org/artifact/com.dougnoel/sentinel)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.sentinel/sentinel/badge.svg)](https://search.maven.org/artifact/io.github.sentinel/sentinel)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![codebeat badge](https://codebeat.co/badges/3d631b66-b308-43cd-87f1-626fde5851ca)](https://codebeat.co/projects/github-com-dougnoel-sentinel-master) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=security_rating)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=coverage)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel)
 
@@ -7,7 +7,7 @@
 A Selenium framework that implements the [Page Object Model](http://cheezyworld.com/2010/11/09/ui-tests-not-brittle/) (POM) using [Object Oriented Programming](https://en.wikipedia.org/wiki/Object-oriented_programming) (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.
 
 ## Quickstart
-If you want to write tests, you are in the wrong place. Head over to the [sentinel.example Project](https://github.com/dougnoel/sentinel.example) to get started. There is extensive documentation there along with sample code to get you up and running in minutes. You can also check out the [Sentinel Javadocs](https://dougnoel.github.io/sentinel/), especially the steps package. Sentinel is intended to be included in your test automation and used as a jar file. If you are writing tests, you should **NOT** be modifying the Sentinel code itself.
+If you want to write tests, you are in the wrong place. Head over to the [sentinel.example Project](https://github.com/sentinel-framework/sentinel.example) to get started. There is extensive documentation there along with sample code to get you up and running in minutes. You can also check out the [Sentinel Javadocs](https://sentinel-framework.github.io/sentinel/), especially the steps package. Sentinel is intended to be included in your test automation and used as a jar file. If you are writing tests, you should **NOT** be modifying the Sentinel code itself.
 
 People wondering where they can write glue code @Given, @When, and @Then steps should first be asking what has been written and attempting to reuse that instead of writing their own. If you are writing your own more than 1% of the time then you are not using the framework as intended and wasting time (or working on something really weird).
 
@@ -32,7 +32,7 @@ These instructions assume you are using Eclipse.
 Clone the project from git.
 
 ```
-git clone https://github.com/dougnoel/sentinel.git
+git clone https://github.com/sentinel-framework/sentinel.git
 ```
 1. Open Eclipse
 2. File -> Open Projects from File system...
@@ -52,7 +52,7 @@ In Eclipse:
 ## 2.0 Frequently Asked Questions (FAQs)
 
 ### How do I create page objects, feature files and new glue code steps?
-All of this is explained at length in the [sentinel.example Project](https://github.com/dougnoel/sentinel.example) project. If you want to use this framework to write tests, that is the code you need to check out - not this. You check this code out to contribute to the project.
+All of this is explained at length in the [sentinel.example Project](https://github.com/sentinel-framework/sentinel.example) project. If you want to use this framework to write tests, that is the code you need to check out - not this. You check this code out to contribute to the project.
 
 ### How do I run code coverage for my unit tests using Jacoco? ###
 This script will run code coverage and then open up the results in your default browser. The results will not open if there are build failures.
@@ -91,7 +91,7 @@ The jar file will be located in the target directory.
 To install it locally:
 
 ```
-mvn install:install-file -Dfile=sentinel-1.0.0-SNAPSHOT.jar -DgroupId=com.dougnoel -DartifactId=sentinel -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=sentinel-1.0.0-SNAPSHOT.jar -DgroupId=io.github.sentinel -DartifactId=sentinel -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
 ```
 
 If you want to do this all in one step without generating a jar, just run:
@@ -150,7 +150,7 @@ To create a GPG Key, you need a tool. The following tool for Mac has a UI [https
 ## 4.0 Additional Documentation & Resources
 
 ### 4.1 Javadocs
-Sentinel comes with Javadocs which describe its classes in great detail. This includes examples of how you can use the generic Cucumber steps that are already included. The [Sentinel Javadocs](https://dougnoel.github.io/sentinel/) are updated on github with every new version.
+Sentinel comes with Javadocs which describe its classes in great detail. This includes examples of how you can use the generic Cucumber steps that are already included. The [Sentinel Javadocs](https://sentinel-framework.github.io/sentinel/) are updated on github with every new version.
 
 #### 4.1.1 Generating Javadocs
 The Javadocs can also be easily generated by running the following command.
@@ -166,7 +166,7 @@ and any exceptions it throws. We follow the [Liferay-Portal Javadoc Guidelines](
 #### 4.1.2 Publishing Javadocs to Github
 1. Make sure you have updated the version in the pomfile if necessary (pom.xml)
 2. Run `mvn javadoc:javadoc`
-3. Commit the changes and merge them with main. The files will be pulled from the docs folder and published on [https://dougnoel.github.io/sentinel/](https://dougnoel.github.io/sentinel/)
+3. Commit the changes and merge them with main. The files will be pulled from the docs folder and published on [https://sentinel-framework.github.io/sentinel/](https://sentinel-framework.github.io/sentinel/)
 
 For more information, refer to [Configuring a publishing source for your GitHub Pages site](https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
 Additional information can be found under [About GitHub Pages and Jekyll](https://help.github.com/en/github/working-with-github-pages/about-github-pages-and-jekyll) and the [GitHub Pages site](https://pages.github.com/).
@@ -215,7 +215,7 @@ Sentinel is setup to use [Saucelabs](https://saucelabs.com/) for remote executio
 
 ## 5.0 Versioning
 
-We use [Semantic Versioning](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/dougnoel/sentinel/tags). 
+We use [Semantic Versioning](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/sentinel-framework/sentinel/tags). 
 
 ## 6.0 Authors
 

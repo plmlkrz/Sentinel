@@ -1,3 +1,0 @@
-urls:
-   default: http://{env}.dougnoel.com/
-   prod: http://dougnoel.com/

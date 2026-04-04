@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.dougnoel</groupId>
+  <groupId>io.github.sentinel</groupId>
   <artifactId>sentinel</artifactId>
-  <version>1.0.13-SNAPSHOT</version>
+  <version>1.0.14-SNAPSHOT</version>
   <name>sentinel</name>
-  <url>https://github.com/dougnoel/sentinel</url>
+  <url>https://github.com/sentinel-framework/sentinel</url>
 
   <organization>
-    <name>Doug Noël</name>
-    <url>https://github.com/dougnoel/sentinel</url>
+    <name>Sentinel Framework</name>
+    <url>https://github.com/sentinel-framework/sentinel</url>
   </organization>
-
- <developers>
-    <developer>
-      <name>Doug Noël</name>
-      <email>doug@dougnoel.com</email>
-      <organization>Doug Noël</organization>
-      <organizationUrl>https://github.com/dougnoel</organizationUrl>
-    </developer>
-  </developers>
   
 	<licenses>
 		<license>
@@ -29,9 +20,9 @@
 	</licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/dougnoel/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:dougnoel/${project.artifactId}.git</developerConnection>
-    <url>git://github.com/dougnoel/${project.artifactId}.git</url>
+    <connection>scm:git:git://github.com/sentinel-framework/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:sentinel-framework/${project.artifactId}.git</developerConnection>
+    <url>git://github.com/sentinel-framework/${project.artifactId}.git</url>
     <tag>HEAD</tag>
   </scm>
       
@@ -42,8 +33,8 @@
     <sentinel-release-browser>chrome</sentinel-release-browser>
     <sentinel-release-pageobjectpackages>pages</sentinel-release-pageobjectpackages>
     
-    <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <maven-compiler-plugin.release>11</maven-compiler-plugin.release>
+    <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+    <maven-compiler-plugin.release>17</maven-compiler-plugin.release>
     <maven-compiler-plugin.verbose>true</maven-compiler-plugin.verbose>
     <maven-compiler-plugin.debug>true</maven-compiler-plugin.debug>
     <maven-compiler-plugin.parameters>true</maven-compiler-plugin.parameters>
@@ -61,7 +52,7 @@
     <maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>true</maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>
     <maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>true</maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>
 
-    <maven-failsafe-plugin.version>3.0.0-M8</maven-failsafe-plugin.version>
+    <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
 
     <maven-help-plugin.version>3.2.0</maven-help-plugin.version>
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
@@ -72,43 +63,43 @@
     <maven-javadoc-plugin.nohelp>false</maven-javadoc-plugin.nohelp>
 
     <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
-    <maven-surefire-report-plugin.version>3.0.0-M3</maven-surefire-report-plugin.version>
+    <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+    <maven-surefire-report-plugin.version>3.5.5</maven-surefire-report-plugin.version>
 
     <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 
-    <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
 
-    <appium.version>7.6.0</appium.version>
-    <guava.version>31.1-jre</guava.version>
-    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <appium.version>9.4.0</appium.version>
+    <guava.version>33.4.0-jre</guava.version>
+    <commons-lang3.version>3.17.0</commons-lang3.version>
     <extentreports.version>5.0.9</extentreports.version>
     <extent.cucumber.adapter.artifactID>extentreports-cucumber7-adapter</extent.cucumber.adapter.artifactID> <!-- The name of this changes for every major Cucumber rev unfortunately. -->
-    <extent.cucumber.reports.version>1.9.1</extent.cucumber.reports.version>
+    <extent.cucumber.reports.version>1.14.0</extent.cucumber.reports.version>
     <gson.version>2.10.1</gson.version>
     <httpcore.version>4.4.16</httpcore.version>
     <httpclient.version>4.5.14</httpclient.version>
-    <io.cucumber.version>7.8.1</io.cucumber.version>
-    <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
-    <jackson2.version>2.12.7</jackson2.version>
-    <junit.version>5.9.2</junit.version>
-    <log4j2.version>2.16.0</log4j2.version>
-    <lombok.version>1.18.24</lombok.version>
+    <io.cucumber.version>7.22.1</io.cucumber.version>
+    <jackson2.version>2.18.4</jackson2.version>
+    <junit.version>5.12.2</junit.version>
+    <junit4.version>4.13.2</junit4.version>
+    <log4j2.version>2.25.3</log4j2.version>
+    <lombok.version>1.18.36</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <pdfbox.version>2.0.27</pdfbox.version>
-    <sauce_junit.version>2.1.21</sauce_junit.version>
-    <selenium-java.version>3.141.59</selenium-java.version>
+    <selenium-java.version>4.33.0</selenium-java.version>
     <swagger-parser.version>2.1.2</swagger-parser.version>
-    <webdrivermanager.version>5.3.2</webdrivermanager.version>
+    <webdrivermanager.version>5.9.3</webdrivermanager.version>
     <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
-    <commons-csv.version>1.9.0</commons-csv.version>
-    <classgraph.version>4.8.157</classgraph.version>
+    <commons-csv.version>1.14.1</commons-csv.version>
+    <classgraph.version>4.8.180</classgraph.version>
+    <testng.version>7.11.0</testng.version>
     
     <screen-recorder.version>0.7.7.0</screen-recorder.version>
     
-    <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
-    <sonar.organization>dougnoel</sonar.organization>
+    <sonar.projectKey>sentinel-framework_sentinel</sonar.projectKey>
+    <sonar.organization>sentinel-framework</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
@@ -170,8 +161,7 @@
             <!-- Automatically puts the javadocs in the correct directory but this may mess with the release process -->
             <reportOutputDirectory>.</reportOutputDirectory>
             <destDir>docs</destDir>
-            <!-- The next 2 lines needed for OpenJDK11 support -->
-            <source>8</source>
+            <source>17</source>
             <detectJavaApiLink>false</detectJavaApiLink>
           </configuration>
           <executions>
@@ -272,7 +262,7 @@
 		<plugin>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>0.8.5</version>
+			<version>${jacoco-maven-plugin.version}</version>
 			<executions>
 				<execution>
 					<id>prepare-agent</id>
@@ -294,6 +284,25 @@
     </pluginManagement>
     <!-- Added this because the above wasn't working. Need to resolve. -->
 	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.maven.surefire</groupId>
+					<artifactId>surefire-testng</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+				</dependency>
+			</dependencies>
+			<configuration>
+				<suiteXmlFiles>
+					<suiteXmlFile>testng.xml</suiteXmlFile>
+				</suiteXmlFiles>
+				<excludes>
+					<exclude>**/SentinelTests.java</exclude>
+				</excludes>
+			</configuration>
+		</plugin>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-source-plugin</artifactId>
@@ -517,12 +526,6 @@
 
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-ie-driver</artifactId>
-        <version>${selenium-java.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-remote-driver</artifactId>
         <version>${selenium-java.version}</version>
       </dependency>
@@ -531,12 +534,6 @@
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-safari-driver</artifactId>
         <version>${selenium-java.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.saucelabs</groupId>
-        <artifactId>sauce_junit</artifactId>
-        <version>${sauce_junit.version}</version>
       </dependency>
 
       <dependency>
@@ -586,6 +583,24 @@
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
             <version>${classgraph.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>${io.cucumber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>${io.cucumber.version}</version>
         </dependency>
 
     </dependencies>
@@ -690,11 +705,6 @@
 
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-ie-driver</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-remote-driver</artifactId>
     </dependency>
 
@@ -746,14 +756,10 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${junit4.version}</version>
       <!-- junit should usually be test scope unless this is a dedicated test library, which it is. -->
     </dependency>
 
-    <dependency>
-      <groupId>com.saucelabs</groupId>
-      <artifactId>sauce_junit</artifactId>
-    </dependency>
-    
     <dependency>
 	  <groupId>io.github.bonigarcia</groupId>
 	  <artifactId>webdrivermanager</artifactId>
@@ -778,7 +784,31 @@
        <groupId>io.github.classgraph</groupId>
        <artifactId>classgraph</artifactId>
     </dependency>
-    
+
+    <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-testng</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-junit-platform-engine</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-suite</artifactId>
+        <scope>test</scope>
+    </dependency>
+
   </dependencies>
   <description>A Selenium framework that implements a generic Cucumber interface and the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed. Also works for Windows automation and API automation.</description>
 </project>

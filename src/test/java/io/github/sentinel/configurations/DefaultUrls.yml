@@ -1,0 +1,3 @@
+urls:
+   default: http://{env}.sentinel-framework.io/
+   prod: http://sentinel-framework.io/
