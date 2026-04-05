@@ -94,6 +94,7 @@
     <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
     <commons-csv.version>1.14.1</commons-csv.version>
+    <poi-ooxml.version>5.3.0</poi-ooxml.version>
     <classgraph.version>4.8.180</classgraph.version>
     <testng.version>7.11.0</testng.version>
     
@@ -405,6 +406,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>${poi-ooxml.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
         <version>${httpcore.version}</version>
@@ -632,6 +639,11 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-csv</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
     </dependency>
 
     <dependency>
