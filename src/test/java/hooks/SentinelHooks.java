@@ -36,6 +36,10 @@ public class SentinelHooks {
             scenario.attach(screenshot, "image/png", scenario.getName());
         }
 
+        if (scenario.isFailed() && Configuration.toBoolean("aiSelfHeal")) {
+            log.info("Scenario '{}' failed. Check logs for 'Self-healed' entries to review any selector updates applied during this run.", scenario.getName());
+        }
+
         String totalWaitTime = Configuration.toString("totalWaitTime");
         if (totalWaitTime != null) {
             log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: https://github.com/sentinel-framework/sentinel/issues", totalWaitTime);

@@ -20,7 +20,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### 1.1 Prerequisites
 
 What things you need to install the software and how to install them:
- * Java (11 or later)
+ * Java (17 or later)
  * Maven (2.5.4 or later)
  * Integrated Development Environment (Eclipse Suggested)
  * Google Chrome (suggested)
@@ -49,7 +49,93 @@ In Eclipse:
 1. Expand **src/test/java/ -> tests**
 2. Right-click on **SentinelTests.java** and select **Run As... -> JUnit Test**
 
-## 2.0 Frequently Asked Questions (FAQs)
+## 2.0 AI Agents
+
+Sentinel includes three built-in Claude-powered AI agents that can build, expand, and maintain your test suite automatically.
+
+### 2.1 Setup
+
+1. Get an API key from [console.anthropic.com](https://console.anthropic.com) (starts with `sk-ant-`)
+2. Add it to your `conf/sentinel.yml`:
+
+```yaml
+configurations:
+  default:
+    anthropicApiKey: "sk-ant-api03-..."
+    aiSelfHeal: true
+```
+
+### 2.2 Planning Agent
+
+Analyzes a page URL and test objective, then returns a structured list of scenario outlines following Sentinel's Gherkin step vocabulary.
+
+```java
+List<String> plan = SentinelAI.plan(
+    "https://yourapp.com/login",
+    "test login with valid and invalid credentials");
+
+// Returns a list of scenario outlines, e.g.:
+// "1. Successful Login\n  Given I am on the Login Page\n  When I click..."
+// "2. Failed Login - Invalid Password\n  Given I am on..."
+```
+
+### 2.3 Script Generation Agent
+
+Takes a URL and objective, runs the Planning Agent, then writes a complete `.feature` file and YAML page object to disk — ready to run immediately.
+
+```java
+SentinelAI.planAndGenerate(
+    "https://yourapp.com/login",   // page URL
+    "test login flows",            // test objective
+    "LoginPage",                   // name for both generated files
+    "500",                         // feature number/tag prefix (e.g. @500)
+    "com/yourcompany/");           // package path under src/test/java/
+```
+
+This writes two files:
+- `src/test/java/features/500 LoginPage.feature` — Gherkin scenarios tagged `@500`, `@500A`, `@500B`, etc.
+- `src/test/java/com/yourcompany/LoginPage.yml` — YAML page object with element selectors inferred from the steps
+
+You can also run Planning and Script Generation as separate steps:
+
+```java
+// Step 1: plan
+List<String> outlines = SentinelAI.plan("https://yourapp.com/login", "test login");
+
+// Step 2: review/edit outlines, then generate
+ScriptGenerationAgent.generate(outlines, "LoginPage", "https://yourapp.com/login", "500", "com/yourcompany/");
+```
+
+### 2.4 Self-Healing Agent
+
+Runs automatically during test execution when Selenium cannot find an element after exhausting all configured selectors. No code changes are needed in your tests.
+
+**What it does:**
+1. Captures the current page HTML
+2. Sends the failed element name, all broken selectors, and the HTML to Claude
+3. Claude suggests 1-3 alternative selectors
+4. The new selectors are tried immediately — if the element is found, the test continues
+5. The new selectors are written back into the YAML page object on disk for future runs
+
+**Example log output when healing succeeds:**
+```
+INFO  Self-healed element 'login_button' with new selectors: {CSS=button[data-testid='login']}
+```
+
+**Disable self-healing** for a specific environment by setting `aiSelfHeal: false` in `sentinel.yml`:
+```yaml
+configurations:
+  default:
+    aiSelfHeal: false
+```
+
+### 2.5 Built With
+- [Anthropic Java SDK](https://github.com/anthropics/anthropic-sdk-java) — official Java client for the Claude API
+- Model: `claude-sonnet-4-6`
+
+---
+
+## 3.0 Frequently Asked Questions (FAQs)
 
 ### How do I create page objects, feature files and new glue code steps?
 All of this is explained at length in the [sentinel.example Project](https://github.com/sentinel-framework/sentinel.example) project. If you want to use this framework to write tests, that is the code you need to check out - not this. You check this code out to contribute to the project.
@@ -177,6 +263,7 @@ The changelog is generated using [github_changelog_generator](https://github.com
 `github_changelog_generator -u dougnoel -p sentinel --token`
 
 ### 4.3 Built With
+* [Anthropic Java SDK](https://github.com/anthropics/anthropic-sdk-java) - Official Java client for the Claude AI API, used by the built-in AI agents.
 * [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/) - CSV reading/writing library
 * [Apache PDFBox](https://pdfbox.apache.org/) - PDF reading/writing library.
 * [Apache StringUtils](https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/StringUtils.html) - Advanced String functionality that is optimized.

@@ -21,6 +21,9 @@ configurations:
     tunnelIdentifier: "tunnelID"
     recordTests: true
     imageDirectory: "my/path/to/test/images"
+    anthropicApiKey: "sk-ant-your-key-here"
+    aiSelfHeal: true
+    aiModel: "claude-sonnet-4-6"
   stage:
     name: "Sentinel.Example Stage Run"
     headless: false

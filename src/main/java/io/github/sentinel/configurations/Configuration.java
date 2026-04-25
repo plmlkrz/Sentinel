@@ -71,7 +71,7 @@ public class Configuration {
 				ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 						.configure(DeserializationFeature
 						.FAIL_ON_UNKNOWN_PROPERTIES, false);
-				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
+				sentinelConfigurations = mapper.readValue( CONFIGURATION_FILE, ConfigurationData.class );
 			} catch (Exception e) {
 				String errorMessage = SentinelStringUtils.format("Could not load the {} property because of the exception: {}." + System.lineSeparator() +
 						"Please fix the file or pass the property in on the commandline using the -D{}= option.", configurationKey, e.getMessage(), configurationKey, configurationKey);

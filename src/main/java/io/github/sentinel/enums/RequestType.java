@@ -9,6 +9,9 @@ package io.github.sentinel.enums;
 public enum RequestType {
 	DELETE,
 	GET,
+	HEAD,
+	OPTIONS,
+	PATCH,
 	POST,
 	PUT;
 }

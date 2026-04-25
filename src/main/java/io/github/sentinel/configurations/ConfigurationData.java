@@ -1,26 +1,23 @@
 package io.github.sentinel.configurations;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ConfigurationData extends File {
+public class ConfigurationData {
 	/**
 	 * Config file for sentinel Configuration Settings. Users can create a sentinel.yml file and we will load
 	 * configs from this file instead of setting them manually on the command line each time. A user can override
 	 * a specific setting by passing in a command line arg or using System.getProperty() in the setup method in the Test java file.
 	 */
 	private static final long serialVersionUID = 3930207641065895241L;
-	
+
 	@JsonProperty("configurations")
 	private Map<String, Map<String, String>> configurations;
-	
+
 	@JsonCreator
-    public ConfigurationData() throws FileNotFoundException {
-        super("conf/sentinel.yml");
+    public ConfigurationData() {
     }
 	
 	/**

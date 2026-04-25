@@ -36,6 +36,9 @@ public class API extends YAMLObject {
 		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
 		OpenAPI openAPI = result.getOpenAPI();
 		List<Server> servers = openAPI.getServers();
+		if (servers == null || servers.isEmpty()) {
+			throw new IOException("The OpenAPI spec at " + swaggerUrl + " has no server entries.");
+		}
 
 		try {
 			var firstServer = servers.get(0).getUrl();

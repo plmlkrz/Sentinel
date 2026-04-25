@@ -24,6 +24,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import io.github.sentinel.ai.SentinelAI;
 import io.github.sentinel.configurations.Time;
 import io.github.sentinel.enums.SelectorType;
 import io.github.sentinel.pages.PageManager;
@@ -179,6 +180,23 @@ public class Element {
 	    		return element;
 	    	}	
         }
+
+		// Self-healing: ask Claude for alternative selectors when all configured ones fail
+		String pageSource = null;
+		try { pageSource = driver().getPageSource(); } catch (Exception ignored) {}
+		if (pageSource != null) {
+			Map<SelectorType, String> newSelectors =
+				SentinelAI.selfHeal(getName(), PageManager.getPage().getName(), selectors, pageSource);
+			if (!newSelectors.isEmpty()) {
+				selectors.putAll(newSelectors);
+				WebElement healed = findElementInCurrentFrame();
+				if (healed != null) {
+					log.info("Self-healed element '{}' with new selectors: {}", getName(), newSelectors);
+					return healed;
+				}
+			}
+		}
+
 		var errorMessage = SentinelStringUtils.format("{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
 				elementType, getName(), selectors);
 		throw new NoSuchElementException(errorMessage);
