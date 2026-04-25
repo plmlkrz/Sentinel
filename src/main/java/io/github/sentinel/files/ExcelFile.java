@@ -151,7 +151,7 @@ public class ExcelFile extends TestFile {
         if (effectiveType == CellType.FORMULA) {
             CellValue evaluated = evaluator.evaluate(cell);
             return switch (evaluated.getCellType()) {
-                case STRING  -> evaluated.getStringValue();
+                case STRING  -> evaluated.getStringValue().trim();
                 case NUMERIC -> formatNumericValue(cell, evaluated.getNumberValue());
                 case BOOLEAN -> String.valueOf(evaluated.getBooleanValue());
                 default      -> "";
@@ -159,7 +159,7 @@ public class ExcelFile extends TestFile {
         }
 
         return switch (effectiveType) {
-            case STRING  -> cell.getStringCellValue();
+            case STRING  -> cell.getStringCellValue().trim();
             case NUMERIC -> formatNumericValue(cell, cell.getNumericCellValue());
             case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
             default      -> "";

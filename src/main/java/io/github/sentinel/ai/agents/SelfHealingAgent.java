@@ -84,7 +84,7 @@ public class SelfHealingAgent {
             "Current page HTML (truncated):\n" +
             truncatedHtml;
 
-        String response = ClaudeClient.complete(SYSTEM_PROMPT, userPrompt);
+        String response = ClaudeClient.completeWithThinking(SYSTEM_PROMPT, userPrompt, 8192L);
         Map<SelectorType, String> newSelectors = parseSelectors(response);
 
         if (newSelectors.isEmpty()) {

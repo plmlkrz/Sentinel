@@ -1,0 +1,20 @@
+<extentreports>
+  <configuration>
+    <theme>dark</theme>
+    <encoding>utf-8</encoding>
+    <protocol>https</protocol>
+    <timelineEnabled>true</timelineEnabled>
+    <charts>
+      <enable>true</enable>
+      <configuration>
+        <pieChart>true</pieChart>
+        <barChart>true</barChart>
+      </configuration>
+    </charts>
+    <offlineMode>true</offlineMode>
+    <documentTitle>Sentinel Automation Report</documentTitle>
+    <reportName>Sentinel BDD Test Results</reportName>
+    <logo>https://raw.githubusercontent.com/sentinel-framework/sentinel/main/images/eclipse_tool_bar_icon_run.png</logo>
+  </configuration>
+</extentreports>
+

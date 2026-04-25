@@ -41,7 +41,7 @@ public class ExcelSteps {
         String filePath;
         try {
             filePath = Configuration.getTestData(fileLocation.trim(), "fileLocation");
-        } catch (FileException fe) {
+        } catch (FileException | NullPointerException e) {
             filePath = fileLocation;
         }
         FileManager.setCurrentTestFile(new ExcelFile(Path.of(filePath), numberOfHeaderRows));

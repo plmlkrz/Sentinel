@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Facade that coordinates all three Sentinel AI agents.
  *
- * <h3>Interactive usage (engineer-initiated):</h3>
+ * <h2>Interactive usage (engineer-initiated):</h2>
  * <pre>
  * // Plan only — get back scenario outlines:
  * List&lt;String&gt; plan = SentinelAI.plan("https://example.com/login", "test login flows");
@@ -31,7 +31,7 @@ import java.util.Map;
  *     "com/example/");               // YAML package path under src/test/java/
  * </pre>
  *
- * <h3>Automatic self-healing:</h3>
+ * <h2>Automatic self-healing:</h2>
  * {@link #selfHeal} is called automatically by
  * {@link io.github.sentinel.elements.Element} when all selectors fail.
  * Engineers do not need to call it directly.
