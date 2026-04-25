@@ -84,7 +84,7 @@
     <jackson2.version>2.18.4</jackson2.version>
     <junit.version>5.12.2</junit.version>
     <junit4.version>4.13.2</junit4.version>
-    <log4j2.version>2.25.3</log4j2.version>
+    <log4j2.version>2.25.4</log4j2.version>
     <lombok.version>1.18.36</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <pdfbox.version>2.0.27</pdfbox.version>
