@@ -21,7 +21,7 @@ configurations:
     tunnelIdentifier: "tunnelID"
     recordTests: true
     imageDirectory: "my/path/to/test/images"
-    anthropicApiKey: "sk-ant-your-key-here"
+    anthropicApiKey: "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"
     aiSelfHeal: true
     aiModel: "claude-sonnet-4-6"
   stage:

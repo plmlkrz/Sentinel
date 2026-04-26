@@ -51,13 +51,13 @@ public class APISteps {
 	 * 
 	 * @param body String the json to be passed as the body of the request.
 	 */
-	@Given("I set the request body to")
+	@When("I set the request body to")
 	public static void setRequestBody(String body) {
 		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
         log.trace("Body passed: {}", body);
 	}
 
-	@Given("^I set the request body to upload a file from the location (.*?) as a multipart/form-data with the name (.*?)")
+	@When("^I set the request body to upload a file from the location (.*?) as a multipart/form-data with the name (.*?)")
 	public static void setRequestBodyToMultipartFormDataForFileUpload(String fileToUploadPath, String multipartSegmentName) throws FileNotFoundException {
 		Path filePath = Path.of(fileToUploadPath);
 		String filename = filePath.getFileName().toString();

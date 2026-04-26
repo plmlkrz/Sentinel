@@ -35,21 +35,25 @@ public class API extends YAMLObject {
 		String swaggerUrl = Configuration.getURL(APIManager.getAPI());
 		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
 		OpenAPI openAPI = result.getOpenAPI();
-		List<Server> servers = openAPI.getServers();
-		if (servers == null || servers.isEmpty()) {
-			throw new IOException("The OpenAPI spec at " + swaggerUrl + " has no server entries.");
+		List<Server> servers = (openAPI != null) ? openAPI.getServers() : null;
+
+		if (servers != null && !servers.isEmpty()) {
+			try {
+				var firstServer = servers.get(0).getUrl();
+				var uriBuilder = new URIBuilder(firstServer + passedText);
+				if (!uriBuilder.isAbsolute()) {
+					String basePath = firstServer.endsWith("/") ? firstServer.substring(0, firstServer.length() - 1) : firstServer;
+					uriBuilder = new URIBuilder(swaggerUrl).setPath(basePath + passedText);
+				}
+				return uriBuilder;
+			} catch (URISyntaxException e) {
+				throw new IOException(e);
+			}
 		}
 
-		try {
-			var firstServer = servers.get(0).getUrl();
-			var uriBuilder = new URIBuilder(firstServer + passedText);
-			if(!uriBuilder.isAbsolute()) {
-				uriBuilder = (new URIBuilder(swaggerUrl)).setPath(passedText);
-			}
-			return uriBuilder;
-		} catch (URISyntaxException e) {
-			throw new IOException(e);
-		}
+		// Fall back: treat the configured URL as a plain base URL
+		String base = swaggerUrl.endsWith("/") ? swaggerUrl.substring(0, swaggerUrl.length() - 1) : swaggerUrl;
+		return new URIBuilder(base + passedText);
 	}
 	
 	public Request getRequest() {

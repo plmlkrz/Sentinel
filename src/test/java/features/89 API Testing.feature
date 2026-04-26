@@ -1,156 +1,116 @@
 #language: en
-@89
+@89 @api
 Feature: 89 API Testing
-  Tests using the Swagger Pet Store example API.
-  https://petstore3.swagger.io/
+  Tests using the JSONPlaceholder fake REST API.
+  https://jsonplaceholder.typicode.com
 
-  @89A
-  Scenario: 89A POST Swagger Test
-    Given I use the API named Pet Store API
+  @89A @api
+  Scenario: 89A POST JSONPlaceholder Test
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
       And I add a Content-Type header with the value application/json
-    When I load puppydata to use as the request body
-      And I send a POST request to the pet endpoint
+    When I load postdata to use as the request body
+      And I send a POST request to the posts endpoint
+    Then I verify the response code equals 201
+      And I verify the response was received in less than 2 seconds
+      And I validate the response contains the text "sentinel"
+
+  @89B @api
+  Scenario: 89B GET JSONPlaceholder Test
+    Given I use the API named JSONPlaceholder API
+      And I add an Accept header with the value application/json
+    When I GET record {test_id} from the posts endpoint
     Then I verify the response code equals 200
       And I verify the response was received in less than 2 seconds
-      And I validate the response contains the text "doggie"
+      And I validate the response contains the text "userId"
 
-  @89B
-  Scenario: 89B GET Swagger Test
-    Given I use the API named Pet Store API
-      And I add an Accept header with the value application/json
-    When I GET record {test_id} from the pet endpoint
-    Then I verify the response code equals 200
-      And I verify the response was received in less than 0.8 seconds
-      And I validate the response contains the text "photoUrls"
-
-  @89C
-  Scenario: 89C PUT Swagger Test
-    Given I use the API named Pet Store API
+  @89C @api
+  Scenario: 89C PUT JSONPlaceholder Test
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
       And I add a Content-Type header with the value application/json
     When I set the request body to
     """
     {
-	  "id": 10,
-	  "name": "puppy",
-	  "category": {
-	    "id": 1,
-	    "name": "Dogs"
-	  },
-	  "photoUrls": [
-	    "string"
-	  ],
-	  "tags": [
-	    {
-	      "id": 0,
-	      "name": "string"
-	    }
-	  ],
-	  "status": "available"
-	}
+      "id": 1,
+      "title": "sentinel updated post",
+      "body": "updated by sentinel framework",
+      "userId": 1
+    }
     """
-    And I send a PUT request to the pet endpoint
+    And I send a PUT request to the posts/1 endpoint
     Then I verify the response code equals 200
-      And I validate the response contains the text "puppy"
+      And I validate the response contains the text "sentinel"
 
-  @89D
-  Scenario: 89D Parameter Swagger Test
-    Given I use the API named Pet Store API
+  @89D @api
+  Scenario: 89D Parameter JSONPlaceholder Test
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
-      And I add a status parameter with the value available
-    When I send a GET request to the pet/findByStatus endpoint
+      And I add a userId parameter with the value 1
+    When I send a GET request to the posts endpoint
     Then I verify the response code equals 200
-      And I validate the response contains the text "photoUrls"
+      And I validate the response contains the text "userId"
 
-  @89E
-  Scenario: 89E DELETE Swagger Test
-    Given I use the API named Pet Store API
+  @89E @api
+  Scenario: 89E DELETE JSONPlaceholder Test
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
-    When I DELETE record 10 from the pet endpoint
+    When I DELETE record 1 from the posts endpoint
     Then I verify the response code equals 200
     Given I add an Accept header with the value application/json
-    When I GET record 10 from the pet endpoint
+    When I GET record 9999 from the posts endpoint
     Then I verify the response code equals 404
 
-  @89F
-  Scenario: 89F DELETE Header Swagger Test
-    Given I use the API named Pet Store API
+  @89F @api
+  Scenario: 89F DELETE Header JSONPlaceholder Test
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
-      And I add an api_key header with the value 123
-    When I DELETE record 10 from the pet endpoint
+      And I add an Authorization header with the value Bearer test-token
+    When I DELETE record 1 from the posts endpoint
     Then I verify the response code equals 200
-    Given I add an Accept header with the value application/json
-    When I GET record 10 from the pet endpoint
-    Then I verify the response code equals 404
 
-  @89G
+  @89G @api
   Scenario: 89G Body With Parameters Test
-    Given I use the API named Pet Store API
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
       And I add a Content-Type header with the value application/json
     When I initialize the configuration values as follows
     """
-    id: 10
-    category_name: puppies
+    userId: 5
+    post_title: sentinel parameterized post
     """
     When I set the request body to
     """
     {
-	  "id": {id},
-	  "name": "puppy",
-	  "category": {
-	    "id": 1,
-	    "name": "{category_name}"
-	  },
-	  "photoUrls": [
-	    "string"
-	  ],
-	  "tags": [
-	    {
-	      "id": 0,
-	      "name": "string"
-	    }
-	  ],
-	  "status": "available"
-	}
+      "title": "{post_title}",
+      "body": "test body",
+      "userId": {userId}
+    }
     """
-    And I send a POST request to the pet endpoint
-    Then I verify the response code equals 200
-    And I validate the response contains the text "puppy"
+    And I send a POST request to the posts endpoint
+    Then I verify the response code equals 201
+      And I validate the response contains the text "sentinel"
 
-  @89H
+  @89H @api
   Scenario: 89H URL With Parameter Test
-    Given I use the API named Pet Store API
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
     When I initialize the configuration values as follows
     """
-    id: 10
+    id: 5
     """
-      And I send a GET request to the pet/{id} endpoint
+      And I send a GET request to the posts/{id} endpoint
     Then I verify the response code equals 200
 
-  @89I
+  @89I @api
   Scenario: 89I Query String Stored Parameter Test
-    Given I use the API named Pet Store API
+    Given I use the API named JSONPlaceholder API
       And I add an Accept header with the value application/json
     When I initialize the configuration values as follows
     """
-    dog_status: sold
+    user_id: 3
     """
-      And I add a status parameter with the value {dog_status}
-    When I send a GET request to the pet/findByStatus endpoint
+      And I add a userId parameter with the value {user_id}
+    When I send a GET request to the posts endpoint
     Then I verify the response code equals 200
-      And I validate the response contains the text "sold"
-
-  @89J @513
-  Scenario: 89J / 513 Attempt to send multipart/form-data request and observe bad request response
-    Given I use the API named Pet Store API
-    When I set the request body to upload a file from the location src/test/java/images/eclipse_tool_bar_icon_run.png as a multipart/form-data with the name file
-      And I add an additionalMetadata parameter with the value {"source": "sentinel"}
-      And I initialize the configuration values as follows
-    """
-    id: 10
-    """
-      And I send a POST request to the pet/{id}/uploadImage endpoint
-    Then I verify the response code equals 415
+      And I validate the response contains the text "userId"

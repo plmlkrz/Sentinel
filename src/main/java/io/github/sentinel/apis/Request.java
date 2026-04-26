@@ -275,17 +275,19 @@ public class Request {
 					response = new Response(httpClient.execute(httpRequest));
 					response.setResponseTime(Duration.ofNanos(System.nanoTime() - startTime));
 				}
+				if (response.getResponseCode() >= 500 && attempt < maxRetries) {
+					attempt++;
+					log.warn("Request returned server error {} (attempt {}/{}), retrying in {} ms.",
+							response.getResponseCode(), attempt, maxRetries, retryDelayMs);
+					sleepForRetry();
+					continue;
+				}
 				break;
 			} catch (java.io.IOException e) {
 				if (++attempt > maxRetries) throw new IOException(e);
 				log.warn("Request failed (attempt {}/{}), retrying in {} ms: {}",
 						attempt, maxRetries, retryDelayMs, e.getMessage());
-				try {
-					Thread.sleep(retryDelayMs);
-				} catch (InterruptedException ie) {
-					Thread.currentThread().interrupt();
-					throw new IOException(ie);
-				}
+				sleepForRetry();
 			}
 		}
 		APIManager.setLastCurlCommand(toCurlCommand());
@@ -293,6 +295,15 @@ public class Request {
 		log.trace("Response Code: {} Response: {}", response.getResponseCode(), response.getResponse());
 		APIManager.setResponse(response);
 		reset();
+	}
+
+	private void sleepForRetry() {
+		try {
+			Thread.sleep(retryDelayMs);
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
+			throw new IOException(ie);
+		}
 	}
 
 	private CloseableHttpClient buildHttpClient() {

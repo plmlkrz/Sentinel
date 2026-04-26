@@ -1,0 +1,13 @@
+urls:
+  default: https://jsonplaceholder.typicode.com
+testdata:
+  default:
+    variables:
+      test_id: 1
+    postdata:
+      json: |
+        {
+          "title": "sentinel test post",
+          "body": "created by sentinel framework",
+          "userId": 1
+        }
