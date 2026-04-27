@@ -10,7 +10,8 @@ import org.openqa.selenium.WebDriver;
  * Currently we store one driver for browsers and one for Windows. We can add an appium driver here as well.
  */
 public class Driver {
-	private static EnumMap<PageObjectType, SentinelDriver> drivers = new EnumMap<> (PageObjectType.class);
+	private static final ThreadLocal<EnumMap<PageObjectType, SentinelDriver>> drivers =
+			ThreadLocal.withInitial(() -> new EnumMap<>(PageObjectType.class));
 	
 	/**
 	 * Exists only to defeat instantiation.
@@ -25,12 +26,11 @@ public class Driver {
      */
     private static SentinelDriver getSentinelDriver() {
     	PageObjectType pageObjectType = PageManager.getPage().getPageObjectType();
-    	SentinelDriver currentDriver = null;
+    	SentinelDriver currentDriver;
     	if (pageObjectType == PageObjectType.EXECUTABLE) {
-    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WindowsDriverFactory.createWindowsDriver()));
-    	}
-    		else {
-    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WebDriverFactory.getWebDriver()));
+    		currentDriver = drivers.get().computeIfAbsent(pageObjectType, d -> new SentinelDriver(WindowsDriverFactory.createWindowsDriver()));
+    	} else {
+    		currentDriver = drivers.get().computeIfAbsent(pageObjectType, d -> new SentinelDriver(WebDriverFactory.getWebDriver()));
         }
     	return currentDriver;
     }
@@ -48,8 +48,9 @@ public class Driver {
      * Quits all drivers and removes them from the list of active drivers.
      */
     public static void quitAllDrivers() {
-    	drivers.forEach((driverType, driver) -> driver.quit());
-    	drivers.clear();
+    	drivers.get().forEach((driverType, driver) -> driver.quit());
+    	drivers.get().clear();
+    	drivers.remove();
     }
     
     /**

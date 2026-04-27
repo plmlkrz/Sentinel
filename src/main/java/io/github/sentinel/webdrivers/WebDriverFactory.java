@@ -24,7 +24,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  */
 public class WebDriverFactory {
     private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
-    private static WebDriver driver = null;
+    private static final ThreadLocal<WebDriver> driverHolder = new ThreadLocal<>();
 
     private WebDriverFactory() {
         // Exists only to defeat instantiation.
@@ -41,24 +41,50 @@ public class WebDriverFactory {
      * combination.
      */
     protected static WebDriver instantiateWebDriver() {
-        //Saucelabs Driver setup
+        WebDriver driver;
+
+        // Testcontainers: containerized browser in CI
+        if (Configuration.toBoolean("containerized")) {
+            driver = TestcontainersDriverFactory.createContainerDriver();
+            driverHolder.set(driver);
+            return driver;
+        }
+
+        // SauceLabs cloud
         var saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
-            driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement but it must be set before being returned.
+            driver = SauceLabsDriverFactory.createSaucelabsDriver();
+            driverHolder.set(driver);
+            return driver;
+        }
+
+        // BrowserStack cloud
+        var browserStackUserName = Configuration.toString("browserStackUserName");
+        if (browserStackUserName != null) {
+            driver = BrowserStackDriverFactory.createBrowserStackDriver();
+            driverHolder.set(driver);
+            return driver;
+        }
+
+        // LambdaTest cloud
+        var lambdaTestUserName = Configuration.toString("lambdaTestUserName");
+        if (lambdaTestUserName != null) {
+            driver = LambdaTestDriverFactory.createLambdaTestDriver();
+            driverHolder.set(driver);
             return driver;
         }
 
         var browser = Configuration.browser();
 
-        //Grid Driver setup
+        // Selenium Grid
         var gridUrl = Configuration.toString("gridUrl");
         if (gridUrl != null) {
             driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+            driverHolder.set(driver);
             return driver;
         }
 
-        // Initialize the driver object based on the browser and operating system (OS).
-        // Throw an error if the value isn't found.   	
+        // Local browser
         switch (browser) {
             case "chrome":
                 driver = createChromeDriver();
@@ -78,6 +104,7 @@ public class WebDriverFactory {
                 throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
         }
 
+        driverHolder.set(driver);
         return driver;
     }
 
@@ -87,11 +114,11 @@ public class WebDriverFactory {
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getWebDriver() {
-        if (driver == null) {
+        if (driverHolder.get() == null) {
             instantiateWebDriver();
-            log.info("Driver created: {}", driver);
+            log.info("Driver created: {}", driverHolder.get());
         }
-        return driver;
+        return driverHolder.get();
     }
 
     /**
@@ -99,15 +126,18 @@ public class WebDriverFactory {
      */
     protected static void quit() {
         if (exists()) {
-            getWebDriver().quit();
-            driver = null;
+            driverHolder.get().quit();
+            if (Configuration.toBoolean("containerized")) {
+                TestcontainersDriverFactory.stopContainer();
+            }
+            driverHolder.remove();
         } else {
             log.info("Attempted to call quit on a driver that did not exist.");
         }
     }
 
     public static boolean exists() {
-        return driver != null;
+        return driverHolder.get() != null;
     }
 
     /**
