@@ -54,6 +54,15 @@ public class APIManager {
 	}
 
 	/**
+	 * Sets a GraphQL query as the request body, wrapping it in {"query":"..."} and
+	 * adding a Content-Type: application/json header.
+	 * @param query String the GraphQL query or mutation string
+	 */
+	public static void setGraphQLBody(String query) {
+		getAPI().getRequest().setGraphQLBody(query);
+	}
+
+	/**
 	 * Sets the body to a multipart/form-data body, using the given name, boundary, input stream, and filename.
 	 * @param nameOfInput String name of the multipart segment.
 	 * @param boundary String the multipart boundary.

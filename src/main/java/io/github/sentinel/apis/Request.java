@@ -183,6 +183,20 @@ public class Request {
 	}
 
 	/**
+	 * Builds and sets a GraphQL request body from a query string.
+	 * Wraps the query in the standard {"query":"..."} JSON envelope and sets Content-Type to application/json.
+	 * @param query String the GraphQL query or mutation string
+	 */
+	public void setGraphQLBody(String query) {
+		String escaped = query.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
+		setBody("{\"query\":\"" + escaped + "\"}");
+		boolean hasContentType = headers.stream().anyMatch(h -> "Content-Type".equalsIgnoreCase(h.getName()));
+		if (!hasContentType) {
+			addHeader("Content-Type", "application/json");
+		}
+	}
+
+	/**
 	 * Creates a StringEntity to hold the json body.
 	 * @param body String the JSON to encode.
 	 */
