@@ -1,0 +1,9 @@
+urls:
+  default: https://demoqa.com/select-menu
+elements:
+  old_style_select:
+    elementType: SelectElement
+    id: "oldSelectMenu"
+  select_value_dropdown:
+    elementType: PrimeNGDropdown
+    xpath: "//*[@id='withOptGroup']"

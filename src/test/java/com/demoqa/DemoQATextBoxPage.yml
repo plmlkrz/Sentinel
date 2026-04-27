@@ -1,0 +1,23 @@
+urls:
+  default: https://demoqa.com/text-box
+elements:
+  full_name_textbox:
+    elementType: TextBox
+    id: "userName"
+  email_textbox:
+    elementType: TextBox
+    id: "userEmail"
+  current_address_textarea:
+    elementType: TextBox
+    id: "currentAddress"
+  permanent_address_textarea:
+    elementType: TextBox
+    id: "permanentAddress"
+  submit_button:
+    id: "submit"
+  output_section:
+    id: "output"
+  output_name:
+    id: "name"
+  output_email:
+    id: "email"

@@ -1,0 +1,5 @@
+urls:
+  default: https://demoqa.com/sample
+elements:
+  heading:
+    id: "sampleHeading"

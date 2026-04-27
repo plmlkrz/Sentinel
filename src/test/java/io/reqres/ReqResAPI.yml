@@ -1,0 +1,28 @@
+urls:
+  default: https://reqres.in/api
+testdata:
+  default:
+    new_user:
+      json: |
+        {
+          "name": "sentinel test user",
+          "job": "automation engineer"
+        }
+    updated_user:
+      json: |
+        {
+          "name": "sentinel updated user",
+          "job": "senior automation engineer"
+        }
+    register:
+      json: |
+        {
+          "email": "eve.holt@reqres.in",
+          "password": "pistol"
+        }
+    login:
+      json: |
+        {
+          "email": "eve.holt@reqres.in",
+          "password": "pistol"
+        }
