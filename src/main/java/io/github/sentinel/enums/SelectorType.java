@@ -41,6 +41,7 @@ public enum SelectorType {
 	NAME,
 	PARTIALTEXT,
 	RUNTIMEID, //Used for Windows Element Only
+	SHADOW_CSS,	// Used for ShadowElement — CSS selector inside a shadow root
 	TAGNAME, //Used for Windows Element Only
 	TEXT, 	// Used for both Element and Select Element
 	VALUE, 	//Used for Select Element Only
