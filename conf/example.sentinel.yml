@@ -15,10 +15,39 @@ configurations:
     browser: "chrome"
     browserVersion: "latest"
     chromeBrowserBinary: "my/path/here/executableName.exe"
+
+    # ── SauceLabs ──────────────────────────────────────────────────────────────
     saucelabsUserName: "username"
     saucelabsAccessKey: "apikey"
     parent-tunnel: "tunnelname"
     tunnelIdentifier: "tunnelID"
+
+    # ── BrowserStack ───────────────────────────────────────────────────────────
+    # browserStackUserName: "username"
+    # browserStackAccessKey: "accesskey"
+    # browserStackOS: "Windows"
+    # browserStackOSVersion: "11"
+    # browserStackBuild: "1.0.0"
+    # browserStackProject: "Sentinel Tests"
+
+    # ── LambdaTest ─────────────────────────────────────────────────────────────
+    # lambdaTestUserName: "username"
+    # lambdaTestAccessKey: "accesskey"
+    # lambdaTestPlatform: "Windows 11"
+    # lambdaTestBuild: "1.0.0"
+    # lambdaTestProject: "Sentinel Tests"
+
+    # ── Testcontainers (requires testcontainers:selenium on classpath) ──────────
+    # containerized: true
+
+    # ── Test retry ─────────────────────────────────────────────────────────────
+    # testRetryCount: 1
+
+    # ── Database (JDBC — add your driver to pom.xml) ───────────────────────────
+    # db.mydb.url: "jdbc:postgresql://localhost:5432/testdb"
+    # db.mydb.username: "testuser"
+    # db.mydb.password: "testpass"
+
     recordTests: true
     imageDirectory: "my/path/to/test/images"
     anthropicApiKey: "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"

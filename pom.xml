@@ -86,7 +86,9 @@
     <junit4.version>4.13.2</junit4.version>
     <log4j2.version>2.25.3</log4j2.version>
     <lombok.version>1.18.36</lombok.version>
-    <mashape.unirest.version>1.4.9</mashape.unirest.version>
+    <allure.version>2.27.0</allure.version>
+    <testcontainers.version>1.20.1</testcontainers.version>
+    <axe-core-selenium.version>4.9.1</axe-core-selenium.version>
     <pdfbox.version>2.0.27</pdfbox.version>
     <selenium-java.version>4.33.0</selenium-java.version>
     <swagger-parser.version>2.1.2</swagger-parser.version>
@@ -547,9 +549,27 @@
       </dependency>
 
       <dependency>
-        <groupId>com.mashape.unirest</groupId>
-        <artifactId>unirest-java</artifactId>
-        <version>${mashape.unirest.version}</version>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-cucumber7-jvm</artifactId>
+        <version>${allure.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-testng</artifactId>
+        <version>${allure.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>selenium</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.deque.html.axe-core</groupId>
+        <artifactId>selenium</artifactId>
+        <version>${axe-core-selenium.version}</version>
       </dependency>
 
       <dependency>
@@ -787,8 +807,9 @@
 	</dependency>
 
     <dependency>
-      <groupId>com.mashape.unirest</groupId>
-      <artifactId>unirest-java</artifactId>
+      <groupId>com.deque.html.axe-core</groupId>
+      <artifactId>selenium</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
@@ -855,6 +876,24 @@
         <groupId>org.junit.platform</groupId>
         <artifactId>junit-platform-suite</artifactId>
         <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-cucumber7-jvm</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-testng</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>selenium</artifactId>
+        <optional>true</optional>
     </dependency>
 
   </dependencies>
