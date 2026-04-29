@@ -4,9 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import com.deque.html.axe.core.selenium.AxeBuilder;
-import com.deque.html.axe.core.selenium.Results;
-import com.deque.html.axe.core.selenium.Rule;
+import com.deque.html.axecore.results.Results;
+import com.deque.html.axecore.results.Rule;
+import com.deque.html.axecore.selenium.AxeBuilder;
 
 import io.cucumber.java.en.Then;
 import io.github.sentinel.strings.SentinelStringUtils;

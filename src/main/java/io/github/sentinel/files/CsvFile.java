@@ -200,6 +200,9 @@ public class CsvFile extends TestFile{
         if(numHeaderRows < 1){
             throw new IndexOutOfBoundsException("This method is undefined for CSV files without header rows.");
         }
+        if(csvContents.isEmpty()){
+            throw new FileException("CSV file is empty or could not be loaded: " + toPath(), this);
+        }
         return csvContents.get(numHeaderRows - 1); //last header row is treated as the one that the data rows conform to.
     }
 

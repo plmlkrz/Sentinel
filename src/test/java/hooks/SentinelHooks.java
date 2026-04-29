@@ -2,6 +2,7 @@ package hooks;
 
 import io.github.sentinel.configurations.Configuration;
 import io.github.sentinel.enums.YAMLObjectType;
+import io.github.sentinel.pages.PageManager;
 import io.github.sentinel.system.SentinelScreenRecorder;
 import io.github.sentinel.system.TestManager;
 import io.github.sentinel.webdrivers.Driver;
@@ -32,8 +33,12 @@ public class SentinelHooks {
     public void tearDown(Scenario scenario) {
         //Take screenshot and attach to report if scenario has failed
         if (scenario.isFailed() && TestManager.getActiveTestObject().getType() != YAMLObjectType.API) {
-            final byte[] screenshot = ((TakesScreenshot) Driver.getWebDriver()).getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshot, "image/png", scenario.getName());
+            try {
+                final byte[] screenshot = ((TakesScreenshot) Driver.getWebDriver()).getScreenshotAs(OutputType.BYTES);
+                scenario.attach(screenshot, "image/png", scenario.getName());
+            } catch (Exception e) {
+                log.warn("Could not capture screenshot for '{}': {}", scenario.getName(), e.getMessage());
+            }
         }
 
         if (scenario.isFailed() && Configuration.toBoolean("aiSelfHeal")) {
@@ -55,6 +60,7 @@ public class SentinelHooks {
 
         if (!Configuration.toBoolean("leaveBrowserOpen")) {
             Driver.quitAllDrivers();
+            PageManager.reset();
         }
     }
 }

@@ -82,7 +82,7 @@ public class TextSteps {
      * @param text String the text to enter into the element
      * @param elementName String the name of the element into which to enter text
      */
-    @When("^I enter (.*) in the (.*)$")
+    @When("^I (?:enter|type) (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
         getElement(elementName).sendKeys(text);
         Configuration.update(elementName, text);

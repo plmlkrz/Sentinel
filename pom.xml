@@ -86,7 +86,7 @@
     <junit4.version>4.13.2</junit4.version>
     <log4j2.version>2.25.3</log4j2.version>
     <lombok.version>1.18.36</lombok.version>
-    <allure.version>2.27.0</allure.version>
+    <allure.version>2.34.0</allure.version>
     <testcontainers.version>1.20.1</testcontainers.version>
     <axe-core-selenium.version>4.9.1</axe-core-selenium.version>
     <pdfbox.version>2.0.27</pdfbox.version>

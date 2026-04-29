@@ -1,5 +1,8 @@
 urls:
   default: https://reqres.in/api
+headers:
+  default:
+    x-api-key: reqres-free
 testdata:
   default:
     new_user:

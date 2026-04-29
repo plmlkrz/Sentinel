@@ -14,6 +14,7 @@ Feature: 228 Open New Window or Tab.feature
     Then I verify a new window opens the Demo QA Sample Page
       And I verify the Heading contains the text "This is a sample page"
     When I close the browser window
+    Then I am redirected to the Demo QA Browser Windows Page
     Then I verify the New Window Button is displayed
 
   @228B
@@ -23,6 +24,7 @@ Feature: 228 Open New Window or Tab.feature
     Then I verify a new tab opens to the Demo QA Sample Page
       And I verify the Heading contains the text "This is a sample page"
     When I close the browser tab
+    Then I am redirected to the Demo QA Browser Windows Page
     Then I verify the New Tab Button is displayed
 
   @228C
@@ -30,10 +32,11 @@ Feature: 228 Open New Window or Tab.feature
     Given I am on the Demo QA Browser Windows Page
     When I initialize the configuration values as follows
     """
-    partial_tab_title: DEMOQA
+    partial_tab_title: sample
     """
       And I click the New Window Button
     Then I look for and switch to a window on the Demo QA Sample Page with a title that contains the same text used in the partial_tab_title
       And I verify the Heading contains the text "This is a sample page"
     When I close the browser window
+    Then I am redirected to the Demo QA Browser Windows Page
     Then I verify the New Window Button is displayed

@@ -17,7 +17,20 @@
       "PowerShell($mvn = \"C:\\\\Program Files\\\\JetBrains\\\\IntelliJ IDEA Community Edition 2025.2.6.1\\\\plugins\\\\maven\\\\lib\\\\maven3\\\\bin\\\\mvn.cmd\"; $env:JAVA_HOME = \"C:\\\\Program Files\\\\Java\\\\jdk-22\"; Set-Location \"C:\\\\Users\\\\peter\\\\IdeaProjects\\\\Sentinel\"; & $mvn compile 2>&1 | Select-String -Pattern \"ERROR|error|cannot find|cannot be resolved\" | Select-Object -First 60)",
       "PowerShell($mvn = \"C:\\\\Program Files\\\\JetBrains\\\\IntelliJ IDEA Community Edition 2025.2.6.1\\\\plugins\\\\maven\\\\lib\\\\maven3\\\\bin\\\\mvn.cmd\"; $env:JAVA_HOME = \"C:\\\\Program Files\\\\Java\\\\jdk-22\"; Set-Location \"C:\\\\Users\\\\peter\\\\IdeaProjects\\\\Sentinel\"; $output = & $mvn compile 2>&1; $exitCode = $LASTEXITCODE; $output | Where-Object { $_ -match \"^\\\\[ERROR\\\\]|\\\\.java:\\\\d+:|BUILD FAILURE|BUILD SUCCESS\" } | Select-Object -First 40; Write-Host \"Exit code: $exitCode\")",
       "Bash(perl *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(xargs grep *)",
+      "Bash(git commit -m ' *)",
+      "Bash(jar tf *)",
+      "Bash(unzip -l ~/.m2/repository/com/deque/html/axe-core/selenium/4.9.1/selenium-4.9.1.jar)",
+      "Bash(unzip -l ~/.m2/repository/com/deque/html/axe-core/dequeutilites/4.9.1/dequeutilites-4.9.1.jar)",
+      "PowerShell(mvn dependency:get *)",
+      "PowerShell(& \"C:\\\\Maven\\\\apache-maven-3.9.15-bin\\\\apache-maven-3.9.15\\\\bin\\\\mvn.cmd\" \"dependency:get\" \"-Dartifact=org.testcontainers:selenium:1.20.1\" 2>&1 | Select-Object -Last 20)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\peter\\\\.m2\\\\repository\\\\org\\\\testcontainers\\\\\" -Recurse | Where-Object { $_.Extension -eq \".jar\" } | Select-Object FullName)",
+      "Bash(unzip -l /c/Users/peter/.m2/repository/org/testcontainers/selenium/1.20.1/selenium-1.20.1.jar)",
+      "PowerShell($response = Invoke-WebRequest -Uri \"https://repo.maven.apache.org/maven2/io/qameta/allure/allure-cucumber7-jvm/maven-metadata.xml\" -UseBasicParsing; $response.Content)",
+      "PowerShell($response = Invoke-WebRequest -Uri \"https://repo.maven.apache.org/maven2/io/qameta/allure/allure-cucumber7-jvm/2.29.0/allure-cucumber7-jvm-2.29.0.pom\" -UseBasicParsing; \\($response.Content | Select-String -Pattern \"gherkin|messages\" -Context 0,2\\).Matches.Value; $response.Content | Select-String \"gherkin|messages\" | Select-Object -ExpandProperty Line)",
+      "PowerShell($response = Invoke-WebRequest -Uri \"https://repo.maven.apache.org/maven2/io/qameta/allure/allure-cucumber7-jvm/2.29.0/allure-cucumber7-jvm-2.29.0.pom\" -UseBasicParsing; $content = $response.Content; $content | Select-String \"gherkin\" | Select-Object Line)",
+      "PowerShell($url = \"https://repo.maven.apache.org/maven2/io/qameta/allure/allure-cucumber7-jvm/2.29.0/allure-cucumber7-jvm-2.29.0.pom\"; $content = \\(New-Object System.Net.WebClient\\).DownloadString\\($url\\); Write-Output \\($content -split \"`n\" | Select-String \"gherkin|messages|cucumber\" | Select-Object -ExpandProperty Line\\))"
     ]
   }
 }

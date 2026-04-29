@@ -321,10 +321,10 @@ public class VerificationSteps {
      * @param elementName String the name of the element
      * @param assertion String "visible" for a positive check, anything else for negative
      */
-    @Then("^I verify (?:the|a|an) (.*?) is (visible|hidden)$")
+    @Then("^I verify (?:the|a|an) (.*?) is (visible|displayed|hidden)$")
     public static void verifyElementVisibility(String elementName, String assertion) {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, assertion);
-        if (assertion.contentEquals("visible")) {
+        if (assertion.contentEquals("visible") || assertion.contentEquals("displayed")) {
         	assertTrue(expectedResult, getElement(elementName).isDisplayed());
         } else {
         	assertTrue(expectedResult, getElement(elementName).isHidden());

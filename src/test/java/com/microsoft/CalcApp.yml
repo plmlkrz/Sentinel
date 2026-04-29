@@ -1,0 +1,19 @@
+executables:
+  default: "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App"
+elements:
+  result_display:
+    accessibilityid: CalculatorResults
+  button_one:
+    accessibilityid: num1Button
+  button_two:
+    accessibilityid: num2Button
+  button_three:
+    accessibilityid: num3Button
+  plus_button:
+    accessibilityid: plusButton
+  equals_button:
+    accessibilityid: equalButton
+  clear_button:
+    accessibilityid: clearButton
+  nonexistent_element:
+    name: cannotbefound

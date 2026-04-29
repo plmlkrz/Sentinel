@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import io.appium.java_client.windows.options.WindowsOptions;
 import io.github.sentinel.configurations.Configuration;
 import io.appium.java_client.windows.WindowsDriver;
-import static io.appium.java_client.service.local.flags.GeneralServerFlag.BASEPATH;
 
 /**
  * @author Sentinel Framework
@@ -29,7 +28,7 @@ public class WindowsDriverFactory {
 
 	protected static void startAppiumService() {
 		AppiumServiceBuilder builder = new AppiumServiceBuilder();
-		builder.withIPAddress("127.0.0.1").withArgument(BASEPATH , "/wd/hub").usingPort(4725);
+		builder.withIPAddress("127.0.0.1").usingPort(4723);
 		appiumService = AppiumDriverLocalService.buildService(builder);
 		appiumService.isRunning();
 	}
@@ -53,17 +52,23 @@ public class WindowsDriverFactory {
 
 		var capabilities = new WindowsOptions();
 		capabilities.setApp(executable);
-		capabilities.setCapability("forceMjsonwp", true);
-		capabilities.setCapability("ms:experimental-webdriver", true);
-		capabilities.setCapability("deviceName", "Windows10Machine");
-		// platformName and automationName are set automatically by WindowsOptions
 
 		WindowsDriver driver = null;
+		Exception driverCreationException = null;
 		try {
 			driver = new WindowsDriver(appiumService, capabilities);
 		}
 		catch (Exception e) {
+			driverCreationException = e;
 			log.error("{} Driver creation failed for: {}\n{}", e.getCause(), executable, e.getMessage());
+		}
+
+		if (driver == null) {
+			String message = String.format(
+				"WindowsDriver could not be created for executable '%s'. " +
+				"Ensure Appium is running and the application path is correct.",
+				executable);
+			throw new IllegalStateException(message, driverCreationException);
 		}
 
 		log.info("Driver created: {}\nLog Location:       {}\nError Log Location: {}", driver, STDOUT, STDERR);

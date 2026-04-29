@@ -23,11 +23,11 @@ import io.github.sentinel.webdrivers.Driver;
  */
 public class PageManager {
 	private static final Logger log = LogManager.getLogger(PageManager.class);
-	// Only one page reference should exist. We aren't doing multi-threading.
-	private static Page page = null;
+	private static final ThreadLocal<Page> page = ThreadLocal.withInitial(() -> null);
 	// The type of the current page object so that if we are creating a page object that doesn't contain
 	// URLs or Executables, we can infer the current page type from the previous one.
-	private static PageObjectType pageObjectType = PageObjectType.UNKNOWN;
+	private static final ThreadLocal<PageObjectType> pageObjectType =
+			ThreadLocal.withInitial(() -> PageObjectType.UNKNOWN);
 
 	private static WebDriver driver() { return Driver.getWebDriver(); }
 
@@ -44,12 +44,12 @@ public class PageManager {
 	 */
 	public static void setPage(String pageName) {
 		try {
-			page = PageFactory.buildOrRetrievePage(pageName);
-			pageObjectType = page.getPageObjectType();
-			page.clearTables();
-			TestManager.setActiveTestObject(page);
+			page.set(PageFactory.buildOrRetrievePage(pageName));
+			pageObjectType.set(page.get().getPageObjectType());
+			page.get().clearTables();
+			TestManager.setActiveTestObject(page.get());
 		} catch (NullPointerException npe) {
-			page = null;
+			page.remove();
 		}
 	}
 
@@ -59,9 +59,9 @@ public class PageManager {
 	 * @return Page the Page Object
 	 */
 	public static Page getPage() {
-		if (page == null)
+		if (page.get() == null)
 			throw new NotFoundException("Page not created yet. It must be navigated to before it can be used.");
-		return page;
+		return page.get();
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class PageManager {
 	 */
 	public static void open(String pageName, String arguments) {
     	PageManager.setPage(pageName);
-    	if (pageObjectType == PageObjectType.WEBPAGE) {
+    	if (pageObjectType.get() == PageObjectType.WEBPAGE) {
 	    	String url = Configuration.getURL(PageManager.getPage());
 	    	url += arguments == null ? "" : arguments;
 	    	log.debug("Loading the the {} page using the url: {}", pageName, url);
@@ -132,7 +132,16 @@ public class PageManager {
 	 * @return PageObjectType the type of page we are on
 	 */
 	public static PageObjectType getCurrentPageObjectType() {
-		return pageObjectType;
+		return pageObjectType.get();
 	}
-	
+
+	/**
+	 * Removes the ThreadLocal page and pageObjectType references for the current thread.
+	 * Must be called in test teardown to prevent memory leaks in thread pools.
+	 */
+	public static void reset() {
+		page.remove();
+		pageObjectType.remove();
+	}
+
 }
