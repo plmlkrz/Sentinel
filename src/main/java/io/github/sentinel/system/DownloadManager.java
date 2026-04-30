@@ -42,11 +42,11 @@ import de.redsix.pdfcompare.env.SimpleEnvironment;
 public class DownloadManager {
     private static final Logger log = LogManager.getLogger(DownloadManager.class.getName()); // Create a logger.
 
-    private static String fileExtension = "pdf"; // Current file extension - Default of pdf
+    private static final ThreadLocal<String> fileExtension = ThreadLocal.withInitial(() -> "pdf");
 
     private static String downloadDirectory = createDownloadDirectory();
 
-    private static Path mostRecentDownloadPath = null;
+    private static final ThreadLocal<Path> mostRecentDownloadPath = new ThreadLocal<>();
 
     private DownloadManager(){}
 
@@ -77,7 +77,7 @@ public class DownloadManager {
      * @throws IOException if the file cannot be created.
      */
     public static String monitorDownload() throws InterruptedException, IOException {
-        return monitorDownload(downloadDirectory, fileExtension, null);
+        return monitorDownload(downloadDirectory, fileExtension.get(), null);
     }
 
     /**
@@ -89,7 +89,7 @@ public class DownloadManager {
      * @throws IOException if the file cannot be created.
      */
     public static String monitorDownload(Runnable pageAction) throws InterruptedException, IOException {
-        return monitorDownload(downloadDirectory, fileExtension, pageAction);
+        return monitorDownload(downloadDirectory, fileExtension.get(), pageAction);
     }
 
     /**
@@ -390,8 +390,8 @@ public class DownloadManager {
      * 
      * @param fileExtension String file ext to set
      */
-    public static void setFileExtension(String fileExtension) {
-        DownloadManager.fileExtension = fileExtension;
+    public static void setFileExtension(String ext) {
+        fileExtension.set(ext);
     }
 
     /**
@@ -443,9 +443,9 @@ public class DownloadManager {
      */
     private static void setMostRecentDownloadPath(String filename){
         if(StringUtils.isBlank(filename))
-            mostRecentDownloadPath = null;
+            mostRecentDownloadPath.remove();
         else
-            mostRecentDownloadPath = Path.of(getDownloadDirectory(), filename);
+            mostRecentDownloadPath.set(Path.of(getDownloadDirectory(), filename));
     }
 
     /**
@@ -453,6 +453,14 @@ public class DownloadManager {
      * @return Path the path to the most recently-downloaded file.
      */
     public static Path getMostRecentDownloadPath(){
-        return mostRecentDownloadPath;
+        return mostRecentDownloadPath.get();
+    }
+
+    /**
+     * Removes per-thread state. Call from test teardown to prevent ThreadLocal leaks.
+     */
+    public static void reset() {
+        fileExtension.remove();
+        mostRecentDownloadPath.remove();
     }
 }

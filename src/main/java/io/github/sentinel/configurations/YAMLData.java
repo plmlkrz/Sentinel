@@ -68,7 +68,7 @@ public class YAMLData {
 	 * @return Map&lt;String, String&gt; the user account data, or null if the requested environment doesn't exist
 	 */
     public Map<String,String> getAccount(String env, String account) {
-    	if (accounts.containsKey(env)) {
+    	if (accounts != null && accounts.containsKey(env)) {
     		return accounts.get(env).get(account);
     	}
     	return null;

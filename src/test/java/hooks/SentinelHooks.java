@@ -1,8 +1,12 @@
 package hooks;
 
+import io.github.sentinel.apis.APIFactory;
+import io.github.sentinel.apis.APIManager;
 import io.github.sentinel.configurations.Configuration;
 import io.github.sentinel.enums.YAMLObjectType;
+import io.github.sentinel.pages.PageFactory;
 import io.github.sentinel.pages.PageManager;
+import io.github.sentinel.system.DownloadManager;
 import io.github.sentinel.system.SentinelScreenRecorder;
 import io.github.sentinel.system.TestManager;
 import io.github.sentinel.webdrivers.Driver;
@@ -62,5 +66,13 @@ public class SentinelHooks {
             Driver.quitAllDrivers();
             PageManager.reset();
         }
+
+        TestManager.reset();
+        APIManager.reset();
+        APIFactory.reset();
+        PageFactory.reset();
+        Configuration.reset();
+        SentinelScreenRecorder.reset();
+        DownloadManager.reset();
     }
 }

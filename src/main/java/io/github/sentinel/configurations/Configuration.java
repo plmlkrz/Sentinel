@@ -37,6 +37,7 @@ public class Configuration {
 	private static final String ENV = "env";
 
 	private static final Properties appProps = new Properties();
+	private static final ThreadLocal<Map<String,String>> threadProps = ThreadLocal.withInitial(HashMap::new);
 	
 	private static ConfigurationData sentinelConfigurations = null;
 	
@@ -97,8 +98,12 @@ public class Configuration {
 	 * @return String the value of the requested configuration property (null if nothing is found)
 	 */
 	public static String toString(String property) {
-		String propertyValue = appProps.getProperty(property);
-		
+		String propertyValue = threadProps.get().get(property);
+		if (propertyValue != null)
+			return propertyValue;
+
+		propertyValue = appProps.getProperty(property);
+
 		if(propertyValue == null)
 			propertyValue = System.getProperty(property);
 
@@ -157,7 +162,7 @@ public class Configuration {
 	 * @param value String the value to be used
 	 */
 	public static void update(String property, String value) {
-		appProps.setProperty(property, value);
+		threadProps.get().put(property, value);
 	}
 
 	/**
@@ -171,7 +176,10 @@ public class Configuration {
 	 * @return Set&lt;String&gt; containing all property (key) names in the Configuration's stored Properties that start with the given prefix.
 	 */
 	public static Set<String> getAllPropertiesWithPrefix(String prefix) {
-		return appProps.stringPropertyNames().stream().filter(property -> property.startsWith(prefix)).collect(Collectors.toSet());
+		Set<String> result = new HashSet<>();
+		threadProps.get().keySet().stream().filter(p -> p.startsWith(prefix)).forEach(result::add);
+		appProps.stringPropertyNames().stream().filter(p -> p.startsWith(prefix)).forEach(result::add);
+		return result;
 	}
 
 	/**
@@ -195,13 +203,20 @@ public class Configuration {
 	 * @param property String the property to clear
 	 */
 	public static void clear(String property) {
-		appProps.remove(property);
+		threadProps.get().remove(property);
 	}
 
 	/**
-	 * Clears all configuration values that have been set since runtime started.
+	 * Clears all per-test runtime configuration values set since the scenario started.
 	 */
-	public static void clearAllSessionAppProps() { appProps.clear(); }
+	public static void clearAllSessionAppProps() { threadProps.get().clear(); }
+
+	/**
+	 * Removes all per-thread state. Call from test teardown to prevent ThreadLocal leaks.
+	 */
+	public static void reset() {
+		threadProps.remove();
+	}
 	
 	/**
 	 * Returns the given configuration value stored in the passed property as a Double, or 0.0 if nothing is

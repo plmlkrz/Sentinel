@@ -11,7 +11,7 @@ import static org.monte.media.AudioFormatKeys.*;
 import static org.monte.media.VideoFormatKeys.*;
 
 public class SentinelScreenRecorder {
-	private static ScreenRecorder screenRecorder;
+	private static final ThreadLocal<ScreenRecorder> screenRecorder = new ThreadLocal<>();
 
 	private SentinelScreenRecorder(){
 		// This constructor acts only to defeat instantiation
@@ -28,7 +28,7 @@ public class SentinelScreenRecorder {
 
 		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDefaultConfiguration();
-		screenRecorder = new ScreenRecorder(gc, gc.getBounds(), 
+		ScreenRecorder recorder = new ScreenRecorder(gc, gc.getBounds(),
 				new Format(MediaTypeKey, MediaType.FILE, MimeTypeKey, MIME_AVI),
 				new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
 						CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, DepthKey, 24, FrameRateKey,
@@ -36,7 +36,8 @@ public class SentinelScreenRecorder {
 				new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
 				null,
 				new File("./reports/"));
-		screenRecorder.start();
+		recorder.start();
+		screenRecorder.set(recorder);
 	}
 
 	/**
@@ -44,6 +45,17 @@ public class SentinelScreenRecorder {
 	 * @throws IOException if the recording cannot be written
 	 */
 	public static void stopRecording() throws IOException {
-		screenRecorder.stop();
+		ScreenRecorder recorder = screenRecorder.get();
+		if (recorder != null) {
+			recorder.stop();
+			screenRecorder.remove();
+		}
+	}
+
+	/**
+	 * Removes per-thread state. Call from test teardown to prevent ThreadLocal leaks.
+	 */
+	public static void reset() {
+		screenRecorder.remove();
 	}
 }

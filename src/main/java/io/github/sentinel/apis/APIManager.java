@@ -14,10 +14,9 @@ import java.io.InputStream;
  *
  */
 public class APIManager {
-	//Only one API should be in use at a time. We are consciously not multi-threading.
-	private static API api = null;
-	private static Response response = null;
-	private static String lastCurlCommand = "";
+	private static final ThreadLocal<API> api = new ThreadLocal<>();
+	private static final ThreadLocal<Response> response = new ThreadLocal<>();
+	private static final ThreadLocal<String> lastCurlCommand = ThreadLocal.withInitial(() -> "");
 
 	private APIManager() {
 		// Exists only to defeat instantiation.
@@ -31,8 +30,9 @@ public class APIManager {
 		if (apiName == null || apiName.isBlank()) {
 			throw new NotFoundException("API name cannot be null or blank.");
 		}
-		api = APIFactory.buildOrRetrieveAPI(apiName);
-		TestManager.setActiveTestObject(api);
+		API builtApi = APIFactory.buildOrRetrieveAPI(apiName);
+		api.set(builtApi);
+		TestManager.setActiveTestObject(builtApi);
 	}
 
 	/**
@@ -40,9 +40,9 @@ public class APIManager {
 	 * @return API Currently selected API by the tester.
 	 */
 	public static API getAPI() {
-		if (api == null)
+		if (api.get() == null)
 			throw new NotFoundException("API not set yet. It must be created before it can be used.");
-		return APIManager.api;
+		return api.get();
 	}
 
 	/**
@@ -186,15 +186,15 @@ public class APIManager {
 	 * @return Response the response
 	 */
 	public static Response getResponse() {
-		return response;
+		return response.get();
 	}
 
 	/**
 	 * Sets the most recent response.
-	 * @param response Response the response
+	 * @param resp Response the response
 	 */
-	public static void setResponse(Response response) {
-		APIManager.response = response;
+	public static void setResponse(Response resp) {
+		response.set(resp);
 	}
 
 	/**
@@ -202,7 +202,7 @@ public class APIManager {
 	 * @return String the curl command string
 	 */
 	public static String getLastCurlCommand() {
-		return lastCurlCommand;
+		return lastCurlCommand.get();
 	}
 
 	/**
@@ -210,6 +210,15 @@ public class APIManager {
 	 * @param curlCommand String the curl command string
 	 */
 	public static void setLastCurlCommand(String curlCommand) {
-		APIManager.lastCurlCommand = curlCommand;
+		lastCurlCommand.set(curlCommand);
+	}
+
+	/**
+	 * Clears all per-thread API state. Call from test teardown to prevent ThreadLocal leaks.
+	 */
+	public static void reset() {
+		api.remove();
+		response.remove();
+		lastCurlCommand.remove();
 	}
 }
