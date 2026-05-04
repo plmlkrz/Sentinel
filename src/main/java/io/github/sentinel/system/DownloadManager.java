@@ -44,7 +44,8 @@ public class DownloadManager {
 
     private static final ThreadLocal<String> fileExtension = ThreadLocal.withInitial(() -> "pdf");
 
-    private static String downloadDirectory = createDownloadDirectory();
+    private static final ThreadLocal<String> downloadDirectory =
+        ThreadLocal.withInitial(DownloadManager::createThreadSafeDownloadDirectory);
 
     private static final ThreadLocal<Path> mostRecentDownloadPath = new ThreadLocal<>();
 
@@ -57,7 +58,7 @@ public class DownloadManager {
      * @return boolean Returns true if the file exists, false if it does not.
      */
     public static boolean isFileDownloaded(String fileName) {
-    	var dir = new File(downloadDirectory);
+    	var dir = new File(downloadDirectory.get());
         File[] directoryContents = dir.listFiles();
 
         for (var i = 0; i < directoryContents.length; i++) {
@@ -77,7 +78,7 @@ public class DownloadManager {
      * @throws IOException if the file cannot be created.
      */
     public static String monitorDownload() throws InterruptedException, IOException {
-        return monitorDownload(downloadDirectory, fileExtension.get(), null);
+        return monitorDownload(downloadDirectory.get(), fileExtension.get(), null);
     }
 
     /**
@@ -89,7 +90,7 @@ public class DownloadManager {
      * @throws IOException if the file cannot be created.
      */
     public static String monitorDownload(Runnable pageAction) throws InterruptedException, IOException {
-        return monitorDownload(downloadDirectory, fileExtension.get(), pageAction);
+        return monitorDownload(downloadDirectory.get(), fileExtension.get(), pageAction);
     }
 
     /**
@@ -370,8 +371,8 @@ public class DownloadManager {
      * @throws IOException if error during file IO or during document load
      */
     public static String saveImageInPDF(int index, String pdfFileName) throws IOException {
-    	var pdfFile = new File(downloadDirectory + File.separator + pdfFileName);
-    	var imageFile = new File(downloadDirectory + File.separator + pdfFileName + "_" + index + ".jpg");
+    	var pdfFile = new File(downloadDirectory.get() + File.separator + pdfFileName);
+    	var imageFile = new File(downloadDirectory.get() + File.separator + pdfFileName + "_" + index + ".jpg");
         PDFRenderer pdfRenderer = null;
         BufferedImage image = null;
 
@@ -400,7 +401,20 @@ public class DownloadManager {
      * @return String the downloadDirectory 
      */
     public static String getDownloadDirectory() {
-        return downloadDirectory;
+        return downloadDirectory.get();
+    }
+
+    /**
+     * Creates a per-thread download subdirectory under the base download directory.
+     * Uses the thread ID so parallel test threads never share a directory.
+     * @return String the thread-specific download directory path
+     */
+    private static String createThreadSafeDownloadDirectory() {
+        String base = createDownloadDirectory();
+        Path threadDir = Path.of(base, String.valueOf(Thread.currentThread().getId()));
+        threadDir.toFile().mkdirs();
+        log.trace("Setting per-thread download directory to {}", threadDir);
+        return threadDir.toString();
     }
 
     /**
@@ -425,7 +439,7 @@ public class DownloadManager {
      * @param downloadDirectory String the downloadDirectory to set
      */
     public static void setDownloadDirectory(String downloadDirectory) {
-        DownloadManager.downloadDirectory = downloadDirectory;
+        DownloadManager.downloadDirectory.set(downloadDirectory);
     }
 
     /**
@@ -433,8 +447,8 @@ public class DownloadManager {
      * @throws IOException in the case that an IOException occurs while clearing the directory
      */
     public static void clearDownloadDirectory() throws IOException {
-        log.trace("Clearing download directory at {}", downloadDirectory);
-        FileUtils.cleanDirectory(new File(downloadDirectory));
+        log.trace("Clearing download directory at {}", downloadDirectory.get());
+        FileUtils.cleanDirectory(new File(downloadDirectory.get()));
     }
 
     /**
@@ -462,5 +476,6 @@ public class DownloadManager {
     public static void reset() {
         fileExtension.remove();
         mostRecentDownloadPath.remove();
+        downloadDirectory.remove();
     }
 }

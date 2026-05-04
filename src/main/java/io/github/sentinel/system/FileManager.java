@@ -34,7 +34,7 @@ public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
 	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
 
-	private static TestFile currentTestFile = null;
+	private static final ThreadLocal<TestFile> currentTestFile = new ThreadLocal<>();
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -268,7 +268,7 @@ public class FileManager {
 	 * @param file TestFile the file to test
 	 */
 	public static void setCurrentTestFile(TestFile file){
-		currentTestFile = file;
+		currentTestFile.set(file);
 	}
 
 	/**
@@ -276,6 +276,13 @@ public class FileManager {
 	 * @return TestFile the file under test.
 	 */
 	public static TestFile getCurrentTestFile(){
-		return currentTestFile;
+		return currentTestFile.get();
+	}
+
+	/**
+	 * Removes per-thread state. Call from test teardown to prevent ThreadLocal leaks.
+	 */
+	public static void reset() {
+		currentTestFile.remove();
 	}
 }

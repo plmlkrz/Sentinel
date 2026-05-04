@@ -14,13 +14,15 @@ configurations:
     os: "Windows 11"
     browser: "chrome"
     browserVersion: "latest"
-    chromeBrowserBinary: "my/path/here/executableName.exe"
+    # Uncomment only if Chrome is installed in a non-standard location.
+    # chromeBrowserBinary: "C:/Path/To/chrome.exe"
 
     # ── SauceLabs ──────────────────────────────────────────────────────────────
-    saucelabsUserName: "username"
-    saucelabsAccessKey: "apikey"
-    parent-tunnel: "tunnelname"
-    tunnelIdentifier: "tunnelID"
+    # Uncomment and replace with real values only when intentionally running on Sauce Labs.
+    # saucelabsUserName: "username"
+    # saucelabsAccessKey: "apikey"
+    # parent-tunnel: "tunnelname"
+    # tunnelIdentifier: "tunnelID"
 
     # ── BrowserStack ───────────────────────────────────────────────────────────
     # browserStackUserName: "username"

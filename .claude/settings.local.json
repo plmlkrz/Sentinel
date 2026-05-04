@@ -32,7 +32,8 @@
       "PowerShell($response = Invoke-WebRequest -Uri \"https://repo.maven.apache.org/maven2/io/qameta/allure/allure-cucumber7-jvm/2.29.0/allure-cucumber7-jvm-2.29.0.pom\" -UseBasicParsing; \\($response.Content | Select-String -Pattern \"gherkin|messages\" -Context 0,2\\).Matches.Value; $response.Content | Select-String \"gherkin|messages\" | Select-Object -ExpandProperty Line)",
       "PowerShell($response = Invoke-WebRequest -Uri \"https://repo.maven.apache.org/maven2/io/qameta/allure/allure-cucumber7-jvm/2.29.0/allure-cucumber7-jvm-2.29.0.pom\" -UseBasicParsing; $content = $response.Content; $content | Select-String \"gherkin\" | Select-Object Line)",
       "PowerShell($url = \"https://repo.maven.apache.org/maven2/io/qameta/allure/allure-cucumber7-jvm/2.29.0/allure-cucumber7-jvm-2.29.0.pom\"; $content = \\(New-Object System.Net.WebClient\\).DownloadString\\($url\\); Write-Output \\($content -split \"`n\" | Select-String \"gherkin|messages|cucumber\" | Select-Object -ExpandProperty Line\\))",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(git push *)"
     ]
   }
 }

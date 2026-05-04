@@ -7,6 +7,7 @@ import io.github.sentinel.enums.YAMLObjectType;
 import io.github.sentinel.pages.PageFactory;
 import io.github.sentinel.pages.PageManager;
 import io.github.sentinel.system.DownloadManager;
+import io.github.sentinel.system.FileManager;
 import io.github.sentinel.system.SentinelScreenRecorder;
 import io.github.sentinel.system.TestManager;
 import io.github.sentinel.webdrivers.Driver;
@@ -74,5 +75,6 @@ public class SentinelHooks {
         Configuration.reset();
         SentinelScreenRecorder.reset();
         DownloadManager.reset();
+        FileManager.reset();
     }
 }

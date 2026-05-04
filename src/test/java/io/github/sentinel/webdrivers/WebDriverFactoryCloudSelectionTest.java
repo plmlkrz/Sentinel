@@ -1,16 +1,13 @@
 package io.github.sentinel.webdrivers;
 
-import org.junit.After;
-import org.junit.Test;
-
 import io.github.sentinel.configurations.Configuration;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
 
 public class WebDriverFactoryCloudSelectionTest {
 
-    @After
+    @AfterMethod
     public void tearDownAfterEachTest() {
         clearProperty("saucelabsUserName");
         clearProperty("saucelabsAccessKey");
@@ -21,7 +18,7 @@ public class WebDriverFactoryCloudSelectionTest {
         System.setProperty("saucelabsUserName", "username");
         System.setProperty("saucelabsAccessKey", "apikey");
 
-        assertFalse(WebDriverFactory.hasConfiguredCloudCredentials(
+        Assert.assertFalse(WebDriverFactory.hasConfiguredCloudCredentials(
                 "Sauce Labs", "saucelabsUserName", "saucelabsAccessKey", "username", "apikey"));
     }
 
@@ -29,7 +26,7 @@ public class WebDriverFactoryCloudSelectionTest {
     public void ignoreIncompleteSauceLabsCredentials() {
         System.setProperty("saucelabsUserName", "real-user");
 
-        assertFalse(WebDriverFactory.hasConfiguredCloudCredentials(
+        Assert.assertFalse(WebDriverFactory.hasConfiguredCloudCredentials(
                 "Sauce Labs", "saucelabsUserName", "saucelabsAccessKey", "username", "apikey"));
     }
 
@@ -38,8 +35,19 @@ public class WebDriverFactoryCloudSelectionTest {
         System.setProperty("saucelabsUserName", "real-user");
         System.setProperty("saucelabsAccessKey", "real-access-key");
 
-        assertTrue(WebDriverFactory.hasConfiguredCloudCredentials(
+        Assert.assertTrue(WebDriverFactory.hasConfiguredCloudCredentials(
                 "Sauce Labs", "saucelabsUserName", "saucelabsAccessKey", "username", "apikey"));
+    }
+
+    @Test
+    public void ignorePlaceholderChromeBinary() {
+        Assert.assertNull(WebDriverFactory.sanitizeChromeBinary("my/path/here/executableName.exe"));
+    }
+
+    @Test
+    public void keepValidChromeBinary() {
+        Assert.assertEquals(WebDriverFactory.sanitizeChromeBinary("C:/Program Files/Google/Chrome/Application/chrome.exe"),
+                "C:/Program Files/Google/Chrome/Application/chrome.exe");
     }
 
     private void clearProperty(String property) {
@@ -47,4 +55,6 @@ public class WebDriverFactoryCloudSelectionTest {
         System.clearProperty(property);
     }
 }
+
+
 
