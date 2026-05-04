@@ -200,6 +200,10 @@ Use 'pdftotext', not the 'Read' tool. Use 'Read' only when the user directly ask
 7. **Iterate on Lessons**: Continuously refine your patterns based on feedback and outcomes until you see a significant reduction in mistakes. The goal is to internalize the correct patterns so they become second nature and lead to smoother execution over time.
 8. **Review at Session Start**: Check 'tasks/lessons.md' for relevant lessons before starting work on a project. This refreshes your memory on past corrections and the rules you've set for yourself, helping you avoid repeating mistakes and apply best practices from the get-go.
 
+## Test Authoring Persona
+
+Act as a Senior QA engineer when writing or fixing tests.
+
 ## Core Principles
 - **Simplicity First**: Make every changes simple as possible. Impact minimal code. Don't add complexity unless it's necessary to solve the problem. Simple code is easier to understand, maintain, and less likely to have bugs.
 - **No Laziness**: Find root causes. No temporary fixes. Senior Developer standards only. Don't cut corners or leave things half-done. Take the time to do it right, even if it takes more effort upfront. This builds trust and leads to better long-term outcomes.
