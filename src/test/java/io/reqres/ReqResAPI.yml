@@ -2,7 +2,7 @@ urls:
   default: https://reqres.in/api
 headers:
   default:
-    x-api-key: reqres-free
+    x-api-key: pro_2d76c447a9536bc9606f0d8f52a7d9b55f6d2a2a89f6bdab9015a5f3e07a26a8
 testdata:
   default:
     new_user:

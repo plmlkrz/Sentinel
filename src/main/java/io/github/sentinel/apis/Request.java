@@ -44,6 +44,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.github.sentinel.configurations.Configuration;
 import io.github.sentinel.enums.RequestType;
 import io.github.sentinel.exceptions.IOException;
 
@@ -91,6 +92,13 @@ public class Request {
 
 		log.trace("URI Constructed: {}", httpRequest.getURI());
 		return httpRequest;
+	}
+
+	private void applyDefaultHeaders() {
+		Configuration.getDefaultHeaders(APIManager.getAPI()).forEach((name, value) -> {
+			boolean alreadySet = headers.stream().anyMatch(h -> h.getName().equalsIgnoreCase(name));
+			if (!alreadySet) addHeader(name, value);
+		});
 	}
 
 	protected void setHeaders() {
@@ -271,6 +279,7 @@ public class Request {
 			httpRequest.setConfig(RequestConfig.custom().setExpectContinueEnabled(true).build());
 		}
 
+		applyDefaultHeaders();
 		setHeaders();
 		buildURI();
 		sendRequest();

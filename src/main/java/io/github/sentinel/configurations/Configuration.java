@@ -428,8 +428,26 @@ public class Configuration {
 	}
 	
 	/**
-	 * Returns the Executable for the currently active page based on the environment value set. 
-	 * 
+	 * Returns the default request headers defined in the YAML for the given object and current environment.
+	 * Falls back to the "default" environment key if no env-specific headers are defined.
+	 *
+	 * @param yamlObject YAMLObject the API/Page object to retrieve headers from
+	 * @return Map&lt;String, String&gt; the header name-value pairs, or an empty map if none are defined
+	 */
+	public static Map<String, String> getDefaultHeaders(YAMLObject yamlObject) {
+		var yamlData = getYAMLData(yamlObject);
+		String env = Configuration.environment();
+		if (yamlData.containsHeaders(env)) {
+			return yamlData.getHeaders(env);
+		} else if (yamlData.containsHeaders(DEFAULT)) {
+			return yamlData.getHeaders(DEFAULT);
+		}
+		return new ConcurrentHashMap<>();
+	}
+
+	/**
+	 * Returns the Executable for the currently active page based on the environment value set.
+	 *
 	 * @return String the desired application executable path
 	 */
 	public static String executable() {

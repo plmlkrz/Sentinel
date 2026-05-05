@@ -21,6 +21,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 public class YAMLData {
 	public String name;
 	public Map<String,String> urls;
+	public Map<String,Map<String,String>> headers;
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public String include;
 	public Map<String,Map<String,Map<String,String>>> testdata;
@@ -87,9 +88,30 @@ public class YAMLData {
     }
     
     /**
+     * Returns whether default request headers exist for the given environment.
+     * @param env String the environment to check
+     * @return boolean true if found, otherwise false
+     */
+    public boolean containsHeaders(String env) {
+    	return headers != null && headers.containsKey(env);
+    }
+
+    /**
+     * Returns default request headers for the given environment.
+     * @param env String the environment to check
+     * @return Map&lt;String, String&gt; the header name-value pairs, or an empty map
+     */
+    public Map<String,String> getHeaders(String env) {
+    	if (headers != null && headers.containsKey(env)) {
+    		return headers.get(env);
+    	}
+    	return new ConcurrentHashMap<>();
+    }
+
+    /**
      * Returns whether or not a URL exists for the given environment
      * in the API object.
-     * 
+     *
      * @param env String the environment to check
      * @return boolean true if found, otherwise false
      */

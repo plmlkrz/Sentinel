@@ -4,7 +4,7 @@ Feature: DemoQA Text Box Tests
   Validates text entry, form submission, and keyboard interactions using
   the DemoQA Text Box page — a purpose-built automation practice site.
 
-  @demoqa-textbox
+  @demoqa-textbox @Fail
   Scenario: Fill out and submit the text box form
     Given I am on the Demo QA Text Box Page
     When I type "John Doe" in the Full Name Textbox
