@@ -4,6 +4,8 @@ import static io.github.sentinel.elements.ElementFunctions.getElement;
 
 import io.github.sentinel.elements.Element;
 import io.github.sentinel.webdrivers.Driver;
+import java.security.SecureRandom;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Keys;
@@ -14,6 +16,9 @@ import io.github.sentinel.configurations.Configuration;
 import io.cucumber.java.en.When;
 
 public class TextSteps {
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String ALPHANUMERIC_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 	/**
      * Appends or prepends random alphanumeric text or unique system time in milliseconds
@@ -48,7 +53,7 @@ public class TextSteps {
         String randomCharacters;
 
         if(alphanumericOrNumeric.equals("randomly"))
-            randomCharacters = RandomStringUtils.randomAlphanumeric(16);
+            randomCharacters = secureRandomAlphanumeric(16);
         else
             randomCharacters = Long.toString(System.currentTimeMillis());
 
@@ -86,6 +91,15 @@ public class TextSteps {
     public static void enterText(String text, String elementName) {
         getElement(elementName).sendKeys(text);
         Configuration.update(elementName, text);
+    }
+
+    private static String secureRandomAlphanumeric(int length) {
+        StringBuilder builder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = SECURE_RANDOM.nextInt(ALPHANUMERIC_CHARACTERS.length());
+            builder.append(ALPHANUMERIC_CHARACTERS.charAt(index));
+        }
+        return builder.toString();
     }
     
     /**
