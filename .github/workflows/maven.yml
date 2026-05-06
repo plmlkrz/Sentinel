@@ -13,6 +13,8 @@ jobs:
   build:
 
     runs-on: windows-latest
+    env:
+      RUN_APPIUM: 'false'
 
     steps:
     - name: Set resolution to 1920x1080
@@ -31,43 +33,58 @@ jobs:
       with:
         node-version: 20
     - name: Install Appium
+      if: ${{ env.RUN_APPIUM == 'true' }}
       shell: pwsh
       run: |
         npm install -g --force appium@2
         appium driver install windows
         appium driver list --installed
     - name: Log Node and Appium versions
+      if: ${{ env.RUN_APPIUM == 'true' }}
       shell: pwsh
       run: |
         node -v
         appium -v
-    - name: Resolve Appium command
+    - name: Resolve Appium main.js (Windows)
+      if: ${{ env.RUN_APPIUM == 'true' }}
       shell: pwsh
       run: |
         $npmPrefix = (npm config get prefix).Trim()
-        $appiumCmd = Join-Path $npmPrefix "appium.cmd"
-        if (-not (Test-Path $appiumCmd)) {
-          throw "Could not find appium.cmd at $appiumCmd"
+        $appiumMain = Join-Path $npmPrefix "node_modules\appium\build\lib\main.js"
+        if (-not (Test-Path $appiumMain)) {
+          throw "Could not find Appium entrypoint at $appiumMain"
         }
-        "APPIUM_CMD=$appiumCmd" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "APPIUM_MAIN=$appiumMain" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Start Appium
+      if: ${{ env.RUN_APPIUM == 'true' }}
       shell: pwsh
       run: |
         $appiumStdOut = "$env:RUNNER_TEMP\appium.log"
         $appiumStdErr = "$env:RUNNER_TEMP\appium-error.log"
-        $appiumProcess = Start-Process -FilePath $env:APPIUM_CMD -ArgumentList "--address","127.0.0.1","--port","4723","--log-level","debug" -PassThru -WindowStyle Hidden -RedirectStandardOutput $appiumStdOut -RedirectStandardError $appiumStdErr
+
+        # Start Appium via node for deterministic behavior on Windows CI.
+        $appiumProcess = Start-Process -FilePath "node" `
+          -ArgumentList @($env:APPIUM_MAIN, "--address","127.0.0.1","--port","4723","--log-level","debug") `
+          -PassThru -WindowStyle Hidden `
+          -RedirectStandardOutput $appiumStdOut `
+          -RedirectStandardError $appiumStdErr
+
         "APPIUM_PID=$($appiumProcess.Id)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         "APPIUM_STDOUT=$appiumStdOut" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         "APPIUM_STDERR=$appiumStdErr" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Wait for Appium
+      if: ${{ env.RUN_APPIUM == 'true' }}
       shell: pwsh
       run: |
         for ($i = 0; $i -lt 90; $i++) {
           $proc = Get-Process -Id $env:APPIUM_PID -ErrorAction SilentlyContinue
           if (-not $proc) {
             Write-Host "Appium process exited before becoming ready"
-            if (Test-Path $env:APPIUM_STDOUT) { Get-Content $env:APPIUM_STDOUT -Tail 200 }
-            if (Test-Path $env:APPIUM_STDERR) { Get-Content $env:APPIUM_STDERR -Tail 200 }
+            Write-Host "RUNNER_TEMP=$env:RUNNER_TEMP"
+            Get-ChildItem -Force $env:RUNNER_TEMP | Select-Object Name,Length,LastWriteTime | Format-Table -AutoSize
+
+            if (Test-Path $env:APPIUM_STDOUT) { Write-Host "=== appium.log ==="; Get-Content $env:APPIUM_STDOUT -Tail 400 }
+            if (Test-Path $env:APPIUM_STDERR) { Write-Host "=== appium-error.log ==="; Get-Content $env:APPIUM_STDERR -Tail 400 }
             throw "Appium exited before /status became reachable"
           }
           try {
@@ -78,8 +95,8 @@ jobs:
             Start-Sleep -Seconds 1
           }
         }
-        if (Test-Path $env:APPIUM_STDOUT) { Get-Content $env:APPIUM_STDOUT -Tail 200 }
-        if (Test-Path $env:APPIUM_STDERR) { Get-Content $env:APPIUM_STDERR -Tail 200 }
+        if (Test-Path $env:APPIUM_STDOUT) { Write-Host "=== appium.log ==="; Get-Content $env:APPIUM_STDOUT -Tail 400 }
+        if (Test-Path $env:APPIUM_STDERR) { Write-Host "=== appium-error.log ==="; Get-Content $env:APPIUM_STDERR -Tail 400 }
         throw "Appium did not start within 90 seconds"
     - name: Cache SonarCloud packages
       uses: actions/cache@v4
@@ -103,14 +120,14 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless -DrecordTests -Dtimeout=20 -Dcucumber.filter.tags='not @WindowsOnly'
     - name: Stop Appium
-      if: ${{ always() }}
+      if: ${{ always() && env.RUN_APPIUM == 'true' }}
       shell: pwsh
       run: |
         if ($env:APPIUM_PID) {
           Stop-Process -Id $env:APPIUM_PID -Force -ErrorAction SilentlyContinue
         }
     - name: Upload Appium logs
-      if: ${{ failure() }}
+      if: ${{ failure() && env.RUN_APPIUM == 'true' }}
       uses: actions/upload-artifact@v4
       with:
         name: AppiumLogs
