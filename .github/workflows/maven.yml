@@ -115,10 +115,14 @@ jobs:
        chmod +x ./src/test/resources/scripts/InstallChrome.sh
         ./src/test/resources/scripts/InstallChrome.sh
     - name: Build with Maven and Analyze with Sonar
+      shell: pwsh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless -DrecordTests -Dtimeout=20 -Dcucumber.filter.tags='not @WindowsOnly'
+      run: |
+        # Use a variable to avoid PowerShell @ interpolation issues in double-quoted strings.
+        $tagFilter = 'not @WindowsOnly'
+        mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless -DrecordTests -Dtimeout=20 "-DRUN_APPIUM=$env:RUN_APPIUM" "-Dcucumber.filter.tags=$tagFilter"
     - name: Stop Appium
       if: ${{ always() && env.RUN_APPIUM == 'true' }}
       shell: pwsh
