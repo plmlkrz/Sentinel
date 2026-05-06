@@ -16,7 +16,8 @@ import io.appium.java_client.windows.WindowsDriver;
  */
 public class WindowsDriverFactory {
 	private static final Logger log = LogManager.getLogger(WindowsDriverFactory.class);
-	private static Integer numberOfDriversRunning = 0;
+	private static int numberOfDriversRunning = 0;
+	private static final Object serviceLock = new Object();
 	private static final String STDOUT = "logs/WinAppDriver.log";
 	private static final String STDERR = "logs/WinAppDriverError.log";
 	private static AppiumDriverLocalService appiumService;
@@ -45,8 +46,11 @@ public class WindowsDriverFactory {
 	 * @return WebDriver returns a WindowsDriver&lt;WebElement&gt;
 	 */
 	protected static WebDriver createWindowsDriver() {
-		if (numberOfDriversRunning == 0)
-			startAppiumService();
+		synchronized (serviceLock) {
+			if (numberOfDriversRunning == 0)
+				startAppiumService();
+			numberOfDriversRunning++;
+		}
 
 		String executable = FileManager.winSpecialFolderConverter(Configuration.executable());
 
@@ -64,6 +68,12 @@ public class WindowsDriverFactory {
 		}
 
 		if (driver == null) {
+			synchronized (serviceLock) {
+				if (--numberOfDriversRunning <= 0) {
+					numberOfDriversRunning = 0;
+					appiumService.stop();
+				}
+			}
 			String message = String.format(
 				"WindowsDriver could not be created for executable '%s'. " +
 				"Ensure Appium is running and the application path is correct.",
@@ -72,7 +82,6 @@ public class WindowsDriverFactory {
 		}
 
 		log.info("Driver created: {}\nLog Location:       {}\nError Log Location: {}", driver, STDOUT, STDERR);
-		numberOfDriversRunning += 1;
 		return driver;
 	}
 
@@ -83,11 +92,21 @@ public class WindowsDriverFactory {
 	 * @param driver WindowsDriver&lt;WebElement&gt; the WindowsDriver to quit
 	 */
 	protected static void quit(WindowsDriver driver) {
-		driver.quit();
-		numberOfDriversRunning -= 1;
-		if (numberOfDriversRunning <= 0) {
-			numberOfDriversRunning = 0;
-			appiumService.stop();
+		try {
+			driver.close();
+		} catch (Exception e) {
+			log.warn("Could not close application window before quitting session: {}", e.getMessage());
+		}
+		try {
+			driver.quit();
+		} catch (Exception e) {
+			log.warn("Could not quit driver session: {}", e.getMessage());
+		}
+		synchronized (serviceLock) {
+			if (--numberOfDriversRunning <= 0) {
+				numberOfDriversRunning = 0;
+				appiumService.stop();
+			}
 		}
 	}
 }

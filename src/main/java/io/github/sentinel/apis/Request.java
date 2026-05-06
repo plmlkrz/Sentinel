@@ -209,13 +209,9 @@ public class Request {
 	 * @param body String the JSON to encode.
 	 */
 	public void setBody(String body) {
-		try {
-			this.rawBody = body;
-			this.body = new StringEntity(body);
-			bodyType = HttpBodyType.STRING;
-		} catch (UnsupportedEncodingException e) {
-			throw new IOException(e);
-		}
+		this.rawBody = body;
+		this.body = new StringEntity(body, ContentType.APPLICATION_JSON);
+		bodyType = HttpBodyType.STRING;
 	}
 
 	/**
