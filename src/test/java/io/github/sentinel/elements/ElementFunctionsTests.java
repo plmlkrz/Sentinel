@@ -14,6 +14,7 @@ import org.openqa.selenium.InvalidSelectorException;
 import io.github.sentinel.elements.dropdowns.Dropdown;
 import io.github.sentinel.elements.dropdowns.MaterialUISelect;
 import io.github.sentinel.elements.dropdowns.PrimeNGDropdown;
+import io.github.sentinel.elements.dropdowns.PrimeNGSelect;
 import io.github.sentinel.elements.dropdowns.SelectElement;
 import io.github.sentinel.elements.tables.NGXDataTable;
 import io.github.sentinel.elements.tables.Table;
@@ -73,6 +74,13 @@ public class ElementFunctionsTests {
 		Element element = ElementFunctions.getElement("prime_ng_dropdown");
 		assertTrue("Expecting PrimeNGDropdown class.", element instanceof PrimeNGDropdown);
 		assertEquals("Expecting PrimeNGDropdown Name.", "prime_ng_dropdown", element.getName());
+	}
+
+	@Test
+	public void createPrimeNGSelect() {
+		Element element = ElementFunctions.getElement("prime_ng_select");
+		assertTrue("Expecting PrimeNGSelect class.", element instanceof PrimeNGSelect);
+		assertEquals("Expecting PrimeNGSelect Name.", "prime_ng_select", element.getName());
 	}
 	
 	@Test

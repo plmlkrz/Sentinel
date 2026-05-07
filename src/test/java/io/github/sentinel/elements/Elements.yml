@@ -18,6 +18,9 @@ elements:
   prime_ng_dropdown:
     elementType: PrimeNGDropdown
     name: "register"
+  prime_ng_select:
+    elementType: PrimeNGSelect
+    name: "register"
   select:
     elementType: SelectElement
     name: "firstName"

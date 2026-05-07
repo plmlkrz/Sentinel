@@ -1,9 +1,9 @@
 urls:
-  default: "https://www.primefaces.org/primeng/dropdown"
+  default: "https://primeng.org/select"
 elements:
   city_dropdown:
-    elementType: PrimeNGDropdown
-    xpath: "(//p-dropdown)[1]"
+    elementType: PrimeNGSelect
+    xpath: "(//p-select)[1]"
   country_dropdown:
-    elementType: PrimeNGDropdown
-    xpath: "(//p-dropdown)[5]"
+    elementType: PrimeNGSelect
+    xpath: "(//p-select)[5]"

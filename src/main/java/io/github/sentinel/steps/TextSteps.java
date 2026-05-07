@@ -89,8 +89,24 @@ public class TextSteps {
      */
     @When("^I (?:enter|type) (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
-        getElement(elementName).sendKeys(text);
-        Configuration.update(elementName, text);
+        String normalizedText = normalizeStepText(text);
+        getElement(elementName).sendKeys(normalizedText);
+        Configuration.update(elementName, normalizedText);
+    }
+
+    // Strip matching outer quotes so quoted Gherkin arguments do not type literal quote characters.
+    private static String normalizeStepText(String text) {
+        if (text == null || text.length() < 2) {
+            return text;
+        }
+
+        char first = text.charAt(0);
+        char last = text.charAt(text.length() - 1);
+        if ((first == '"' && last == '"') || (first == '\'' && last == '\'')) {
+            return text.substring(1, text.length() - 1);
+        }
+
+        return text;
     }
 
     private static String secureRandomAlphanumeric(int length) {

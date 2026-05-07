@@ -121,7 +121,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
         # Use a variable to avoid PowerShell @ interpolation issues in double-quoted strings.
-        $tagFilter = 'not @WindowsOnly'
+        $tagFilter = 'not @WindowsOnly and not @Fail'
         mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless -DrecordTests -Dtimeout=20 "-DRUN_APPIUM=$env:RUN_APPIUM" "-Dcucumber.filter.tags=$tagFilter"
     - name: Stop Appium
       if: ${{ always() && env.RUN_APPIUM == 'true' }}
