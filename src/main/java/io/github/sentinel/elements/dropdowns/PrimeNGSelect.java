@@ -42,7 +42,8 @@ public class PrimeNGSelect extends JSDropdownElement {
     @Override
     protected WebElement getOption(int index) {
         Time.wait(SELECTWAITTIME);
-        String xPath = "(//li[contains(@class,'p-select-option')])[" + index + "]";
+        // aria-posinset is explicitly set on every option li by PrimeNG regardless of theme/class names
+        String xPath = "//li[@aria-posinset='" + index + "']";
         log.trace("Selecting option at index {} using xpath {}", index, xPath);
         this.click();
         return this.element(By.xpath(xPath));
