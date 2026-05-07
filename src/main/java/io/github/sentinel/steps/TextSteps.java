@@ -4,6 +4,8 @@ import static io.github.sentinel.elements.ElementFunctions.getElement;
 
 import io.github.sentinel.elements.Element;
 import io.github.sentinel.webdrivers.Driver;
+import java.security.SecureRandom;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Keys;
@@ -14,6 +16,9 @@ import io.github.sentinel.configurations.Configuration;
 import io.cucumber.java.en.When;
 
 public class TextSteps {
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String ALPHANUMERIC_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 	/**
      * Appends or prepends random alphanumeric text or unique system time in milliseconds
@@ -48,7 +53,7 @@ public class TextSteps {
         String randomCharacters;
 
         if(alphanumericOrNumeric.equals("randomly"))
-            randomCharacters = RandomStringUtils.randomAlphanumeric(16);
+            randomCharacters = secureRandomAlphanumeric(16);
         else
             randomCharacters = Long.toString(System.currentTimeMillis());
 
@@ -82,10 +87,35 @@ public class TextSteps {
      * @param text String the text to enter into the element
      * @param elementName String the name of the element into which to enter text
      */
-    @When("^I enter (.*) in the (.*)$")
+    @When("^I (?:enter|type) (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
-        getElement(elementName).sendKeys(text);
-        Configuration.update(elementName, text);
+        String normalizedText = normalizeStepText(text);
+        getElement(elementName).sendKeys(normalizedText);
+        Configuration.update(elementName, normalizedText);
+    }
+
+    // Strip matching outer quotes so quoted Gherkin arguments do not type literal quote characters.
+    private static String normalizeStepText(String text) {
+        if (text == null || text.length() < 2) {
+            return text;
+        }
+
+        char first = text.charAt(0);
+        char last = text.charAt(text.length() - 1);
+        if ((first == '"' && last == '"') || (first == '\'' && last == '\'')) {
+            return text.substring(1, text.length() - 1);
+        }
+
+        return text;
+    }
+
+    private static String secureRandomAlphanumeric(int length) {
+        StringBuilder builder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = SECURE_RANDOM.nextInt(ALPHANUMERIC_CHARACTERS.length());
+            builder.append(ALPHANUMERIC_CHARACTERS.charAt(index));
+        }
+        return builder.toString();
     }
     
     /**

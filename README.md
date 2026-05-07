@@ -129,7 +129,145 @@ configurations:
     aiSelfHeal: false
 ```
 
-### 2.5 Built With
+### 2.5 Parallel Execution, Retry & Allure Reporting
+
+Sentinel supports parallel test execution with full thread-safety baked in.
+
+**Parallel execution** — WebDriver instances are isolated per thread via `ThreadLocal`. Increase the thread count in `testng.xml` to run tests in parallel:
+
+```xml
+<suite name="Sentinel" parallel="methods" thread-count="4">
+```
+
+**Automatic retry** — flaky tests are retried automatically. Configure the retry limit in `sentinel.yml`:
+
+```yaml
+configurations:
+  default:
+    testRetryCount: 1   # 0 = disabled, 1 = one retry (default)
+```
+
+**Allure reporting** — results are written to `target/allure-results` after every run. To generate and open the HTML report:
+
+```bash
+allure serve target/allure-results
+```
+
+---
+
+### 2.6 Shadow DOM
+
+Elements inside Shadow DOM roots are supported via `ShadowElement`. In your YAML page object, declare an element's selector type as `shadow`:
+
+```yaml
+elements:
+  submit_button:
+    shadow: "button[type='submit']"
+```
+
+Sentinel traverses into the shadow root automatically — no JavaScript injection required in your step definitions.
+
+---
+
+### 2.7 Accessibility Testing
+
+Sentinel integrates [axe-core](https://github.com/dequelabs/axe-core-maven-html) for WCAG accessibility audits. Add the optional dependency to your test project's `pom.xml`:
+
+```xml
+<dependency>
+  <groupId>com.deque.html.axe-core</groupId>
+  <artifactId>selenium</artifactId>
+  <version>4.9.1</version>
+  <scope>test</scope>
+</dependency>
+```
+
+Then use these built-in Gherkin steps:
+
+```gherkin
+# Fail the test on any WCAG violation
+Then I verify the page passes accessibility standards
+
+# Fail only at a specific impact threshold (minor/moderate/serious/critical)
+Then I verify the page passes accessibility standards at "serious" level
+
+# Audit mode — log all violations without failing the test
+Then I log accessibility violations
+```
+
+---
+
+### 2.8 Database Testing
+
+Sentinel can execute JDBC queries and assert database state directly in Gherkin. No JDBC driver is bundled — add the driver for your database to your project's `pom.xml`, then configure the connection in `sentinel.yml`:
+
+```yaml
+configurations:
+  default:
+    db.mydb.url: "jdbc:postgresql://localhost:5432/testdb"
+    db.mydb.username: "testuser"
+    db.mydb.password: "testpass"
+```
+
+Built-in database steps:
+
+```gherkin
+Given I open a database connection to "mydb"
+
+# Row existence
+Then I verify a row exists in "users" where "email = 'test@example.com'"
+Then I verify no rows exist in "orders" where "status = 'pending'"
+
+# Row count
+Then I verify "3" rows exist in "items" where "category = 'books'"
+
+# Column value
+Then I verify column "status" equals "active" in "users" where "id = 1"
+Then I verify column "score" is not null in "results" where "user_id = 42"
+
+# Raw SQL
+Then I verify the SQL query "SELECT COUNT(*) FROM audit_log" returns "5"
+
+Then I close the database connection to "mydb"
+```
+
+---
+
+### 2.9 API Enhancements: GraphQL & OAuth2
+
+**GraphQL** — send a typed query with a single step using a Gherkin doc-string:
+
+```gherkin
+When I send a GraphQL query to "/graphql":
+  """
+  {
+    user(id: 1) {
+      name
+      email
+    }
+  }
+  """
+```
+
+**OAuth2 client credentials flow** — store the token from a login response, then apply it to subsequent requests:
+
+```gherkin
+# 1. Authenticate and store the token
+Given I use "ReqRes" API
+When I send a "POST" request to "/api/login" with the JSON body:
+  """
+  { "email": "eve.holt@reqres.in", "password": "cityslicka" }
+  """
+Then I store the response field "$.token" as "authToken"
+
+# 2. Apply the token to the next API call
+Given I apply the stored bearer token "authToken"
+When I send a "GET" request to "/api/users/2"
+```
+
+---
+
+### 2.10 Built With (AI Agents)
 - [Anthropic Java SDK](https://github.com/anthropics/anthropic-sdk-java) — official Java client for the Claude API
 - Model: `claude-sonnet-4-6`
 
@@ -263,11 +401,13 @@ The changelog is generated using [github_changelog_generator](https://github.com
 `github_changelog_generator -u dougnoel -p sentinel --token`
 
 ### 4.3 Built With
+* [Allure Framework](https://allurereport.org/) - Rich test reporting with history, categories, and timeline views.
 * [Anthropic Java SDK](https://github.com/anthropics/anthropic-sdk-java) - Official Java client for the Claude AI API, used by the built-in AI agents.
 * [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/) - CSV reading/writing library
 * [Apache PDFBox](https://pdfbox.apache.org/) - PDF reading/writing library.
 * [Apache StringUtils](https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/StringUtils.html) - Advanced String functionality that is optimized.
-* [Appium](https://appium.io/) - Automation for Application Platforms outside of the Web, used for WinAppDriver.
+* [Appium](https://appium.io/) - Automation for Application Platforms outside of the Web, used for WinAppDriver (Appium 2.x).
+* [axe-core](https://github.com/dequelabs/axe-core-maven-html) - WCAG accessibility testing engine (optional dependency).
 * [Cucumber](https://cucumber.io/) - BDD Testing Framework
 * [Cucumber Extent Reporter 7](https://ghchirp.online/3196/) Interface between Cucumber Results and Extent Reports.
 * [Commons Lang](https://commons.apache.org/proper/commons-lang/) - Apache Commons Lang 3 for common Java language options
@@ -283,9 +423,9 @@ The changelog is generated using [github_changelog_generator](https://github.com
 * [Saucelabs](https://saucelabs.com/) - Multi-Platform, multi-browser external testing service.
 * [Selenium](https://www.seleniumhq.org/) - The automation framework workhorse.
 * [Swagger Parser](https://github.com/swagger-api/swagger-parser) - Reads Swagger API files, allowing us to use them as API Objects.
+* [Testcontainers](https://testcontainers.com/) - Containerized browser execution via Docker (optional dependency).
 * [Traprange](https://github.com/thoqbk/traprange) - Independent library developed using PDFBox to deal with tables in PDFs.
-* [Unirest](http://unirest.io/java.html) - A simple API library used for the API testing functionality.
-* [WebDriverManager](https://github.com/bonigarcia/webdrivermanager) 4.4.1 - Automatically detects browser versions and downloads the correct drivers.
+* [WebDriverManager](https://github.com/bonigarcia/webdrivermanager) - Automatically detects browser versions and downloads the correct drivers.
 * [WinAppDriver](https://github.com/microsoft/WinAppDriver) - Microsoft maintained library for automating Windows OS.
 
 ### 4.4 Web Drivers
@@ -299,6 +439,55 @@ All web drivers are managed by [WebDriverManager](https://github.com/bonigarcia/
 
 ### 4.5 Saucelabs
 Sentinel is setup to use [Saucelabs](https://saucelabs.com/) for remote execution. This is the recommended way to execute test in your build pipeline, because you then do not need to setup an execution server.
+
+### 4.6 BrowserStack
+Sentinel supports [BrowserStack](https://www.browserstack.com/) for cloud-based cross-browser and cross-OS testing. Configure credentials and capabilities in `sentinel.yml`:
+
+```yaml
+configurations:
+  default:
+    browserStackUserName: "your_username"
+    browserStackAccessKey: "your_access_key"
+    browserStackOS: "Windows"
+    browserStackOSVersion: "11"
+    browserStackBuild: "1.0.0"
+    browserStackProject: "My Test Suite"
+    browser: "chrome"
+    browserVersion: "latest"
+```
+
+When `browserStackUserName` is present, Sentinel automatically routes execution through BrowserStack — no other code changes needed.
+
+### 4.7 LambdaTest
+Sentinel supports [LambdaTest](https://www.lambdatest.com/) as an alternative cloud execution platform. Configure in `sentinel.yml`:
+
+```yaml
+configurations:
+  default:
+    lambdaTestUserName: "your_username"
+    lambdaTestAccessKey: "your_access_key"
+    lambdaTestPlatform: "Windows 11"
+    lambdaTestBuild: "1.0.0"
+    lambdaTestProject: "My Test Suite"
+    browser: "chrome"
+    browserVersion: "latest"
+```
+
+When `lambdaTestUserName` is present, Sentinel routes execution through LambdaTest automatically.
+
+### 4.8 Testcontainers
+Sentinel can spin up a containerized browser using [Testcontainers](https://testcontainers.com/) — useful for isolated CI runs without requiring a browser installation on the host. Requires Docker and the `testcontainers:selenium` dependency in your project's `pom.xml`.
+
+Enable in `sentinel.yml`:
+
+```yaml
+configurations:
+  default:
+    containerized: true
+    browser: "chrome"   # or "firefox"
+```
+
+Testcontainers is checked last in the driver resolution order — local and cloud configurations take precedence.
 
 ## 5.0 Versioning
 

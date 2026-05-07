@@ -1,0 +1,9 @@
+urls:
+  default: https://demoqa.com/browser-windows
+elements:
+  new_tab_button:
+    id: "tabButton"
+  new_window_button:
+    id: "windowButton"
+  new_window_message_button:
+    id: "messageWindowButton"

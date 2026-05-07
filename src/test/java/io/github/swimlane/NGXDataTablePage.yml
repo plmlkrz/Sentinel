@@ -3,4 +3,4 @@ urls:
 elements:
   example_table:
     elementType: NGXDataTable
-    xpath: "/html/body/app-root/div/content/basic-auto-demo/div/ngx-datatable"
+    css: "basic-auto-demo ngx-datatable"

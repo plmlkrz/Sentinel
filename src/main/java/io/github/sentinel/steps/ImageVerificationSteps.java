@@ -28,17 +28,23 @@ import com.github.romankh3.image.comparison.ImageComparison;
 import com.github.romankh3.image.comparison.model.ImageComparisonResult;
 import com.github.romankh3.image.comparison.model.ImageComparisonState;
 
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 
 public class ImageVerificationSteps {
-	private static Scenario scenario;
+	private static final ThreadLocal<Scenario> scenarioHolder = new ThreadLocal<>();
 	protected static final Logger log = LogManager.getLogger(ImageVerificationSteps.class.getName()); // Create a logger.
-	
+
 	@Before
 	public static void before(Scenario scenario) {
-		ImageVerificationSteps.scenario = scenario;
+		scenarioHolder.set(scenario);
+	}
+
+	@After
+	public static void afterScenario() {
+		scenarioHolder.remove();
 	}
 	
 	/**
@@ -105,7 +111,7 @@ public class ImageVerificationSteps {
 		}
 
 		//Set file output/input strings and page type
-		String outputFolder = "ImageComparison" + File.separator + FileManager.sanitizeString(scenario.getName());
+		String outputFolder = "ImageComparison" + File.separator + FileManager.sanitizeString(scenarioHolder.get().getName());
 		appendToResult += PageManager.getPage().getName() + "_" + elementName;
 		String imageToCompareFilename = "tempToCompare.png";
 		String failureImageName = imageId + "_" + "FAILED" + appendToResult + ".png";

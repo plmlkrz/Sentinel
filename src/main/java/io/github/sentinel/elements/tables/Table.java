@@ -195,17 +195,17 @@ public class Table extends Element {
 	
 	/**
 	 * Returns array of cell arrays, with data for each cell, in the table. Initial row of table headers is removed
-	 * 
+	 *
 	 * @return List&lt;ArrayList&lt;String&gt;&gt;
 	 */
-	protected List<ArrayList<String>> getOrCreateRows() {
+	protected synchronized List<ArrayList<String>> getOrCreateRows() {
 		if (rows.isEmpty()) {
 			createRowData();
 		}
 		log.trace("Rows Data: {}", rows);
 		return rows;
 	}
-	
+
 	/**
 	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
 	 */
@@ -215,12 +215,14 @@ public class Table extends Element {
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
 				var dataRows = getOrCreateRowElements();
+				List<ArrayList<String>> localRows = new ArrayList<>();
 				for (WebElement row : dataRows) {
 					List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
 					ArrayList<String> cells = new ArrayList<>();
 					cellElements.forEach(cellElement -> cells.add(fetchDataFromCellInterior(cellElement)));
-					rows.add(cells);
+					localRows.add(cells);
 				}
+				rows = localRows;
 				return;
 			} catch (org.openqa.selenium.StaleElementReferenceException sere) {
 				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");

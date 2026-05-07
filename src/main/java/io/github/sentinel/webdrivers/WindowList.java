@@ -128,10 +128,13 @@ public class WindowList {
 	 * @return String the handle of the window with the given string in the title. Null if no window found with a matching title.
 	 */
 	private String searchForWindowByTitleContains(String title){
+		String expected = title == null ? "" : title.toLowerCase();
 		for (String handle : windowHandles) {
 			try {
 				driver.switchTo().window(handle);
-				if (driver.getTitle().contains(title))
+				String currentTitle = driver.getTitle() == null ? "" : driver.getTitle().toLowerCase();
+				String currentUrl = driver.getCurrentUrl() == null ? "" : driver.getCurrentUrl().toLowerCase();
+				if (currentTitle.contains(expected) || currentUrl.contains(expected))
 					return handle;
 			} catch (Exception e) {
 				//Catch if the window changes while we're looking

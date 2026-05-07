@@ -1,0 +1,10 @@
+urls:
+  default: https://httpbin.org
+testdata:
+  default:
+    sample_body:
+      json: |
+        {
+          "framework": "sentinel",
+          "type": "automation"
+        }

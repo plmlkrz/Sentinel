@@ -480,6 +480,49 @@ public class APISteps {
 		APIManager.setTrustAllSsl();
 	}
 
+	// ── OAuth2 / token management ─────────────────────────────────────────────
+
+	/**
+	 * Applies a bearer token stored in a named configuration variable to the current request.
+	 * Use after extracting a token with "I store the response field" to chain auth flows.
+	 * <p>
+	 * <b>Gherkin Example:</b>
+	 * <ul>
+	 * <li>When I apply the stored bearer token "authToken"</li>
+	 * </ul>
+	 * @param variableName String the configuration variable holding the token
+	 */
+	@When("^I apply the stored bearer token \"(.*?)\"$")
+	public static void applyStoredBearerToken(String variableName) {
+		String token = Configuration.toString(variableName);
+		if (token == null || token.isEmpty()) {
+			throw new IllegalStateException("No bearer token found for variable '" + variableName + "'. Store it first with: I store the response field \"$.token\" as \"" + variableName + "\"");
+		}
+		APIManager.setBearerToken(token);
+	}
+
+	// ── GraphQL ───────────────────────────────────────────────────────────────
+
+	/**
+	 * Sends a GraphQL query to the given endpoint as a POST request.
+	 * The docstring body is wrapped automatically in {"query":"..."} format.
+	 * <p>
+	 * <b>Gherkin Example:</b>
+	 * <pre>
+	 * When I send a GraphQL query to the /graphql endpoint
+	 *   """
+	 *   { user(id: 1) { name email } }
+	 *   """
+	 * </pre>
+	 * @param endpoint String the GraphQL endpoint path
+	 * @param query String the GraphQL query string (from docstring)
+	 */
+	@When("^I send a GraphQL query to the (.*?) endpoint$")
+	public static void sendGraphQLQuery(String endpoint, String query) {
+		APIManager.setGraphQLBody(SentinelStringUtils.replaceStoredVariables(query));
+		APIManager.sendRequest(RequestType.POST, SentinelStringUtils.replaceStoredVariables(endpoint));
+	}
+
 	// ── Cookies ───────────────────────────────────────────────────────────────
 
 	/**

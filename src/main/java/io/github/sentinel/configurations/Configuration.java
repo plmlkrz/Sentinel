@@ -37,6 +37,7 @@ public class Configuration {
 	private static final String ENV = "env";
 
 	private static final Properties appProps = new Properties();
+	private static final ThreadLocal<Map<String,String>> threadProps = ThreadLocal.withInitial(HashMap::new);
 	
 	private static ConfigurationData sentinelConfigurations = null;
 	
@@ -97,8 +98,12 @@ public class Configuration {
 	 * @return String the value of the requested configuration property (null if nothing is found)
 	 */
 	public static String toString(String property) {
-		String propertyValue = appProps.getProperty(property);
-		
+		String propertyValue = threadProps.get().get(property);
+		if (propertyValue != null)
+			return propertyValue;
+
+		propertyValue = appProps.getProperty(property);
+
 		if(propertyValue == null)
 			propertyValue = System.getProperty(property);
 
@@ -157,7 +162,7 @@ public class Configuration {
 	 * @param value String the value to be used
 	 */
 	public static void update(String property, String value) {
-		appProps.setProperty(property, value);
+		threadProps.get().put(property, value);
 	}
 
 	/**
@@ -171,7 +176,10 @@ public class Configuration {
 	 * @return Set&lt;String&gt; containing all property (key) names in the Configuration's stored Properties that start with the given prefix.
 	 */
 	public static Set<String> getAllPropertiesWithPrefix(String prefix) {
-		return appProps.stringPropertyNames().stream().filter(property -> property.startsWith(prefix)).collect(Collectors.toSet());
+		Set<String> result = new HashSet<>();
+		threadProps.get().keySet().stream().filter(p -> p.startsWith(prefix)).forEach(result::add);
+		appProps.stringPropertyNames().stream().filter(p -> p.startsWith(prefix)).forEach(result::add);
+		return result;
 	}
 
 	/**
@@ -195,13 +203,20 @@ public class Configuration {
 	 * @param property String the property to clear
 	 */
 	public static void clear(String property) {
-		appProps.remove(property);
+		threadProps.get().remove(property);
 	}
 
 	/**
-	 * Clears all configuration values that have been set since runtime started.
+	 * Clears all per-test runtime configuration values set since the scenario started.
 	 */
-	public static void clearAllSessionAppProps() { appProps.clear(); }
+	public static void clearAllSessionAppProps() { threadProps.get().clear(); }
+
+	/**
+	 * Removes all per-thread state. Call from test teardown to prevent ThreadLocal leaks.
+	 */
+	public static void reset() {
+		threadProps.remove();
+	}
 	
 	/**
 	 * Returns the given configuration value stored in the passed property as a Double, or 0.0 if nothing is
@@ -413,8 +428,26 @@ public class Configuration {
 	}
 	
 	/**
-	 * Returns the Executable for the currently active page based on the environment value set. 
-	 * 
+	 * Returns the default request headers defined in the YAML for the given object and current environment.
+	 * Falls back to the "default" environment key if no env-specific headers are defined.
+	 *
+	 * @param yamlObject YAMLObject the API/Page object to retrieve headers from
+	 * @return Map&lt;String, String&gt; the header name-value pairs, or an empty map if none are defined
+	 */
+	public static Map<String, String> getDefaultHeaders(YAMLObject yamlObject) {
+		var yamlData = getYAMLData(yamlObject);
+		String env = Configuration.environment();
+		if (yamlData.containsHeaders(env)) {
+			return yamlData.getHeaders(env);
+		} else if (yamlData.containsHeaders(DEFAULT)) {
+			return yamlData.getHeaders(DEFAULT);
+		}
+		return new ConcurrentHashMap<>();
+	}
+
+	/**
+	 * Returns the Executable for the currently active page based on the environment value set.
+	 *
 	 * @return String the desired application executable path
 	 */
 	public static String executable() {

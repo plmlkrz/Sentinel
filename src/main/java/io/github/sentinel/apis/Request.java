@@ -44,6 +44,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.github.sentinel.configurations.Configuration;
 import io.github.sentinel.enums.RequestType;
 import io.github.sentinel.exceptions.IOException;
 
@@ -91,6 +92,13 @@ public class Request {
 
 		log.trace("URI Constructed: {}", httpRequest.getURI());
 		return httpRequest;
+	}
+
+	private void applyDefaultHeaders() {
+		Configuration.getDefaultHeaders(APIManager.getAPI()).forEach((name, value) -> {
+			boolean alreadySet = headers.stream().anyMatch(h -> h.getName().equalsIgnoreCase(name));
+			if (!alreadySet) addHeader(name, value);
+		});
 	}
 
 	protected void setHeaders() {
@@ -183,17 +191,27 @@ public class Request {
 	}
 
 	/**
+	 * Builds and sets a GraphQL request body from a query string.
+	 * Wraps the query in the standard {"query":"..."} JSON envelope and sets Content-Type to application/json.
+	 * @param query String the GraphQL query or mutation string
+	 */
+	public void setGraphQLBody(String query) {
+		String escaped = query.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
+		setBody("{\"query\":\"" + escaped + "\"}");
+		boolean hasContentType = headers.stream().anyMatch(h -> "Content-Type".equalsIgnoreCase(h.getName()));
+		if (!hasContentType) {
+			addHeader("Content-Type", "application/json");
+		}
+	}
+
+	/**
 	 * Creates a StringEntity to hold the json body.
 	 * @param body String the JSON to encode.
 	 */
 	public void setBody(String body) {
-		try {
-			this.rawBody = body;
-			this.body = new StringEntity(body);
-			bodyType = HttpBodyType.STRING;
-		} catch (UnsupportedEncodingException e) {
-			throw new IOException(e);
-		}
+		this.rawBody = body;
+		this.body = new StringEntity(body, ContentType.APPLICATION_JSON);
+		bodyType = HttpBodyType.STRING;
 	}
 
 	/**
@@ -257,6 +275,7 @@ public class Request {
 			httpRequest.setConfig(RequestConfig.custom().setExpectContinueEnabled(true).build());
 		}
 
+		applyDefaultHeaders();
 		setHeaders();
 		buildURI();
 		sendRequest();

@@ -19,7 +19,6 @@ import io.cucumber.java.en.When;
 
 /**
  * Methods used to define basic operations.
- * 
  * Functionality in this class includes clicking given elements, entering text, selecting items, verifying elements exist, 
  * contains given text, or are active, enabled, or hidden, verifying table columns or table rows have given text, 
  * unique text, text for stored values, navigating results, 
@@ -31,7 +30,15 @@ public class BaseSteps {
     
     @Before(value="@WindowsOnly")
     public static void before() {
-        assumeTrue(Configuration.operatingSystem().contentEquals(WINDOWS));
+        // Check the RUN_APPIUM system property first (passed from CI via -DRUN_APPIUM=...).
+        // Falls back to the environment variable, then defaults to false.
+        // This guard ensures @WindowsOnly scenarios are skipped when Appium is not available
+        // regardless of whether the Cucumber tag filter is applied correctly by the runner.
+        boolean appiumEnabled = Boolean.parseBoolean(
+            System.getProperty("RUN_APPIUM", System.getenv().getOrDefault("RUN_APPIUM", "false")));
+        assumeTrue("Skipping @WindowsOnly scenario: RUN_APPIUM is not enabled", appiumEnabled);
+        assumeTrue("Skipping @WindowsOnly scenario: OS is not Windows",
+            Configuration.operatingSystem().contentEquals(WINDOWS));
     }
     
     /**

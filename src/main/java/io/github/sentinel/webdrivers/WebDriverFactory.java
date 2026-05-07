@@ -2,6 +2,7 @@ package io.github.sentinel.webdrivers;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -24,7 +25,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  */
 public class WebDriverFactory {
     private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
-    private static WebDriver driver = null;
+    private static final ThreadLocal<WebDriver> driverHolder = new ThreadLocal<>();
+    private static final String EXAMPLE_CHROME_BINARY = "my/path/here/executableName.exe";
 
     private WebDriverFactory() {
         // Exists only to defeat instantiation.
@@ -41,24 +43,47 @@ public class WebDriverFactory {
      * combination.
      */
     protected static WebDriver instantiateWebDriver() {
-        //Saucelabs Driver setup
-        var saucelabsUserName = Configuration.toString("saucelabsUserName");
-        if (saucelabsUserName != null) {
-            driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement but it must be set before being returned.
+        WebDriver driver;
+
+        // Testcontainers: containerized browser in CI
+        if (Configuration.toBoolean("containerized")) {
+            driver = TestcontainersDriverFactory.createContainerDriver();
+            driverHolder.set(driver);
+            return driver;
+        }
+
+        // SauceLabs cloud
+        if (hasConfiguredCloudCredentials("Sauce Labs", "saucelabsUserName", "saucelabsAccessKey", "username", "apikey")) {
+            driver = SauceLabsDriverFactory.createSaucelabsDriver();
+            driverHolder.set(driver);
+            return driver;
+        }
+
+        // BrowserStack cloud
+        if (hasConfiguredCloudCredentials("BrowserStack", "browserStackUserName", "browserStackAccessKey", "username", "accesskey")) {
+            driver = BrowserStackDriverFactory.createBrowserStackDriver();
+            driverHolder.set(driver);
+            return driver;
+        }
+
+        // LambdaTest cloud
+        if (hasConfiguredCloudCredentials("LambdaTest", "lambdaTestUserName", "lambdaTestAccessKey", "username", "accesskey")) {
+            driver = LambdaTestDriverFactory.createLambdaTestDriver();
+            driverHolder.set(driver);
             return driver;
         }
 
         var browser = Configuration.browser();
 
-        //Grid Driver setup
+        // Selenium Grid
         var gridUrl = Configuration.toString("gridUrl");
-        if (gridUrl != null) {
+        if (StringUtils.isNotBlank(gridUrl)) {
             driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+            driverHolder.set(driver);
             return driver;
         }
 
-        // Initialize the driver object based on the browser and operating system (OS).
-        // Throw an error if the value isn't found.   	
+        // Local browser
         switch (browser) {
             case "chrome":
                 driver = createChromeDriver();
@@ -78,6 +103,7 @@ public class WebDriverFactory {
                 throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
         }
 
+        driverHolder.set(driver);
         return driver;
     }
 
@@ -87,11 +113,11 @@ public class WebDriverFactory {
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getWebDriver() {
-        if (driver == null) {
+        if (driverHolder.get() == null) {
             instantiateWebDriver();
-            log.info("Driver created: {}", driver);
+            log.info("Driver created: {}", driverHolder.get());
         }
-        return driver;
+        return driverHolder.get();
     }
 
     /**
@@ -99,15 +125,18 @@ public class WebDriverFactory {
      */
     protected static void quit() {
         if (exists()) {
-            getWebDriver().quit();
-            driver = null;
+            driverHolder.get().quit();
+            if (Configuration.toBoolean("containerized")) {
+                TestcontainersDriverFactory.stopContainer();
+            }
+            driverHolder.remove();
         } else {
             log.info("Attempted to call quit on a driver that did not exist.");
         }
     }
 
     public static boolean exists() {
-        return driver != null;
+        return driverHolder.get() != null;
     }
 
     /**
@@ -138,11 +167,45 @@ public class WebDriverFactory {
             chromeOptions.addArguments("--disable-dev-shm-usage");
             chromeOptions.addArguments("--headless=new");
         }
-        var binary = Configuration.toString("chromeBrowserBinary");
+        var binary = sanitizeChromeBinary(Configuration.toString("chromeBrowserBinary"));
         if (binary != null)
             chromeOptions.setBinary(binary);
         WebDriverManager.chromedriver().setup();
         return new ChromeDriver(chromeOptions);
+    }
+
+    static String sanitizeChromeBinary(String configuredBinary) {
+        var binary = StringUtils.trimToNull(configuredBinary);
+        if (EXAMPLE_CHROME_BINARY.equalsIgnoreCase(binary)) {
+            log.warn("Chrome binary configuration ignored because the example placeholder path is configured. Remove the placeholder for standard local Chrome discovery or replace it with a valid Chrome executable path.");
+            return null;
+        }
+
+        return binary;
+    }
+
+    static boolean hasConfiguredCloudCredentials(String providerName, String userNameProperty, String accessKeyProperty,
+                                                 String placeholderUserName, String placeholderAccessKey) {
+        var userName = StringUtils.trimToNull(Configuration.toString(userNameProperty));
+        var accessKey = StringUtils.trimToNull(Configuration.toString(accessKeyProperty));
+
+        if (userName == null && accessKey == null) {
+            return false;
+        }
+
+        if (userName == null || accessKey == null) {
+            log.warn("{} configuration ignored because both '{}' and '{}' must be set before remote execution can start.",
+                    providerName, userNameProperty, accessKeyProperty);
+            return false;
+        }
+
+        if (userName.equalsIgnoreCase(placeholderUserName) || accessKey.equalsIgnoreCase(placeholderAccessKey)) {
+            log.warn("{} configuration ignored because placeholder credentials are configured. Remove the example values for local runs or replace them with valid credentials for remote execution.",
+                    providerName);
+            return false;
+        }
+
+        return true;
     }
 
 }

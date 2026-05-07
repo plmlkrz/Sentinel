@@ -20,6 +20,10 @@ public class SentinelDriver {
 	//Current page we are on
 
 	SentinelDriver(WebDriver driver) {
+		if (driver == null) {
+			throw new IllegalStateException(
+				"WebDriver instance is null. Driver could not be created — check Appium/WinAppDriver is running and configuration is correct.");
+		}
 		this.driver = driver;
 		windows = new WindowList(driver);
 		pages.add(PageManager.getPage());
