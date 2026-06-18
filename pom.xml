@@ -62,7 +62,7 @@
     <maven-javadoc-plugin.show>private</maven-javadoc-plugin.show>
     <maven-javadoc-plugin.nohelp>false</maven-javadoc-plugin.nohelp>
 
-    <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+    <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     <maven-surefire-report-plugin.version>3.5.5</maven-surefire-report-plugin.version>
 
