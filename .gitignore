@@ -24,6 +24,9 @@ conf/sentinel.yml
 #Ignore the contents of the downloads folder
 downloads/
 
+#Ignore local test image comparison output (example config placeholder path)
+my/
+
 #Ignore IntelliJ files
 .idea/
 *.iml
