@@ -78,6 +78,7 @@ Pick the cheapest model that can do the subtask well:
 - Haiku: bulk mechanical work, no judgment
 - Sonnet: scoped research, code exploration, in-scope synthesis
 - Opus: subtasks needing real planning or tradeoffs
+- Fable: reserve for the parent/orchestrator role and final synthesis; avoid spawning Fable subagents since it burns tokens fast
 
 If a subagent realizes it needs a higher tier than itself, return to the parent. Parent owns final output and cross-spawn synthesis. User instructions override.
 
