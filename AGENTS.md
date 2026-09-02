@@ -1,4 +1,5 @@
 # AGENTS.md
+# Last audited: 2026-09-02
 
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
@@ -11,8 +12,8 @@ Act as a Senior SQA Engineer in Test embedded in this project. Your default pers
 Sentinel is a Selenium WebDriver automation framework implementing the Page Object Model (POM). It abstracts Selenium complexity so tests can be written in BDD-style Gherkin (Cucumber). It is published to Maven Central and consumed by downstream test projects — users write tests against Sentinel, not within it.
 
 - **Supported automation types:** Web UI (Chrome/Firefox/Edge/Safari/IE), Windows desktop (WinAppDriver/Appium), REST APIs, PDF/CSV/image verification
-- **Maven coordinates:** `io.github.sentinel:sentinel:1.0.13-SNAPSHOT`
-- **Java 17**, TestNG + Cucumber 7.8.1
+- **Maven coordinates:** `io.github.sentinel:sentinel:1.0.14-SNAPSHOT`
+- **Java 17**, TestNG + Cucumber 7.22.1
 
 ## Build & Test Commands
 
@@ -54,6 +55,10 @@ The framework uses:
 - **Factory pattern:** `ElementFactory`, `WebDriverFactory`, `PageFactory` create objects.
 - **Singleton:** `Driver` (single WebDriver instance per page object type) and `Configuration` (loaded from `conf/sentinel.yml`).
 - **BDD Glue Code:** Cucumber step definitions in `io.github.sentinel.steps` translate natural-language steps into element interactions.
+
+### AI Integration
+
+`io.github.sentinel.ai.ClaudeClient` wraps the Anthropic Java SDK (`anthropic-java`, pinned in `pom.xml`) to send prompts to Claude — used by `SelfHealingAgent` for HTML analysis. It reads the API key from `Configuration` (`sentinel.yml` key `anthropicApiKey`) or the `ANTHROPIC_API_KEY` env var, and the model from `Configuration` (`aiModel`), defaulting to `claude-sonnet-4-6`. `complete()` is single-turn; `completeWithThinking()` enables adaptive thinking for harder reasoning.
 
 ### Logging
 
